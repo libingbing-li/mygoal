@@ -1,0 +1,21 @@
+.ant-picker {
+  outline: none;
+  box-shadow: none;
+  border: none;
+  padding-bottom: 15px; 
+}
+.ant-picker input {
+  text-align: center;
+}
+.ant-picker:hover, .ant-picker-focused {
+  border-color: #d9d9d9;
+}
+
+.ant-picker-dropdown {
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+}
+.ant-picker-header-view,
+.ant-picker-body td {
+  text-align: center;
+}

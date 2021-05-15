@@ -1,0 +1,73 @@
+.edit_task {
+  .title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100vw;
+    height: 50px;
+    border-bottom: solid 1px #eee;
+    padding: 0 15px;
+    box-sizing: border-box;
+    font-size: 1.3em;
+  }
+  .body {
+    padding: 10px;
+    box-sizing: border-box;
+    width: 100vw;
+    input {
+      width: 80%;
+      height: 30px;
+      line-height: 30px;
+      font-size: 20px;
+      padding: 0;
+      border: none;
+      border-bottom: solid #000 3px;
+      overflow-y: hidden;
+      overflow-x: scroll;
+      margin-bottom: 30px;
+    }
+    textarea {
+      font-size: 13px;
+      box-sizing: border-box;
+      width: 95%;
+      height: 200px;
+      padding: 5px;
+      border: none;
+      border: solid 3px #000;
+      overflow-x: hidden;
+      overflow-y: scroll;
+    }
+  }
+  .tags {
+    text-align: left;
+    padding: 10px 10px 0 10px;
+    margin-bottom: -10px;
+    span {
+      display: inline-block;
+      height: 20px;
+      font-size: 0.8em;
+      text-align: center;
+      line-height: 20px;
+      border-radius: 3px;
+      color: #555;
+      background: #eee;
+      padding: 0 5px;
+      margin: 0 10px 10px 0;
+    }
+  }
+  .addTag {
+    display: flex;
+    text-align: left;
+    padding: 10px 10px;
+    input {
+      flex: 1 1 auto;
+      border: none;
+      border-bottom: solid 1px #ddd;
+      width: 60%;
+      margin: 0 15px;
+      overflow-y: hidden;
+      overflow-x: scroll;
+    }
+  }
+
+}
