@@ -93,7 +93,7 @@ class EditGoal extends React.Component<ModelEditGoal & { dispatch: any }> {
 	// 后退清空数据
 	back = () => {
 		this.props.dispatch({
-			type: 'note/changeState',
+			type: 'editGoal/changeState',
           payload: {
             timeId: 0,
             endTimeId: 0,

@@ -1,16 +1,19 @@
 import app from '../utils/app';
 import indexedDB from '../utils/indexedDB';
-import { ModelNote, NoteShow } from '../utils/interface';
+import { ModelEditTask, TaskShow, GoalShow } from '../utils/interface';
 
 export default {
   namespace: 'editTask',
   state: {
     timeId: 0,
+    txt: '',
     tags: [],
-    data: '',
+    interval:{type: 1, num: 0},
+    data: null,
+    goaldata: [],
   },
   reducers: {
-    changeState(state: ModelNote, { payload }: any) {
+    changeState(state: ModelEditTask, { payload }: any) {
       return { ...state, ...payload };
     },
   },
@@ -21,55 +24,63 @@ export default {
       call: 调用异步逻辑, 支持Promise const result = yield call(fetch, '/todos');
       select: 从state中获取数据,属性名是命名空间的名字 const todos = yield select(state => state.todos);
       */
-      const state: ModelNote = yield select((state: any) => state.note);
-      let dbName = 'NoteShow';
+      const state: ModelEditTask = yield select((state: any) => state.editTask);
+      let dbName = 'Tasks';
       let success: boolean = false;
       if (state.timeId) {
         console.log('进入编辑');
         // 编辑
-        let note: NoteShow = {
+        let data: TaskShow = {
           timeId: state.timeId,
-          title: state.title,
+          endTimeId: state.data.endTimeId,
+          txt: state.txt,
           tags: state.tags,
-          data: payload.data,
+          interval:state.interval,
         };
-        success = yield indexedDB.put(dbName, note);
+        success = yield indexedDB.put(dbName, data);
       } else {
         console.log('进入添加');
         // 添加
-        let note: NoteShow = {
+        let data: TaskShow = {
           timeId: new Date().getTime(),
-          title: state.title === '请输入标题' ? '' : state.title,
+          endTimeId: 0,
+          txt: state.txt,
           tags: state.tags,
-          data: payload.data,
+          interval:state.interval,
         };
-        success = yield indexedDB.add(dbName, note);
+        success = yield indexedDB.add(dbName, data);
       }
       if (success) {
         yield put({
           type: 'changeState',
           payload: {
             timeId: 0,
+            txt: '',
             tags: [],
-            data: '',
-            title: '请输入标题',
+						data: null,
           }
         });
         payload.goBack();
         yield put({
-          type: 'show/init',
+          type: 'task/init',
         });
       } else {
-        app.info('日记保存失败');
+        app.info('保存失败');
       }
     },
     *getData({ payload }: any, { put, call, select }: any) {
-      const state: ModelNote = yield select((state: any) => state.note);
-      let dbName = 'NoteShow';
-      const notedata: Array<NoteShow> = yield indexedDB.getData(dbName, 'timeId', Number(payload.timeId));
+      const state: ModelEditTask = yield select((state: any) => state.editTask);
+      let dbName = 'Tasks';
+      const data: TaskShow = yield indexedDB.getData(dbName, 'timeId', Number(payload.timeId));
       yield put({
         type: 'changeState',
-        payload: notedata[0],
+        payload: {
+          timeId: payload.timeId,
+          txt: data.txt,
+          tags: data.tags,
+          interval: data.interval,
+          data,
+        },
       })
     },
     *remove({ payload }: any, {put, call, select}: any) {
@@ -78,28 +89,37 @@ export default {
       call: 调用异步逻辑, 支持Promise const result = yield call(fetch, '/todos');
       select: 从state中获取数据,属性名是命名空间的名字 const todos = yield select(state => state.todos);
       */
-      let state: ModelNote = yield select((state: any) => state.note);
+      let state: ModelEditTask = yield select((state: any) => state.editTask);
       // 选择库名
-      let dbName = 'NoteShow';
-      console.log(state);
+      let dbName = 'Tasks';
       const success: boolean = yield indexedDB.remove(dbName, Number(state.timeId));
       if (success) {
         yield put({
           type: 'changeState',
           payload: {
             timeId: 0,
+            txt: '',
             tags: [],
-            data: '',
-            title: '请输入标题',
+						data: null,
           }
         });
         payload.goBack();
         yield put({
-          type: 'show/init',
+          type: 'task/init',
         });
       } else {
-        app.info('日记删除失败');
+        app.info('删除失败');
       }
+    },
+    *init({ payload }: any, {put, call, select}: any) {
+      let dbName = 'Goals';
+      let goaldata: Array<GoalShow> = yield indexedDB.getData(dbName, 'timeId');
+      yield put({
+        type: 'changeState',
+        payload: {
+          goaldata,
+        }
+      });
     },
   }
 };

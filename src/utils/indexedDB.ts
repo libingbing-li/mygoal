@@ -18,8 +18,7 @@ const list = [
   ['Tasks', [
     'timeId',
     'endTimeId',
-    'name',
-    'goals',
+    'txt',
   ]],
   // 历史
   ['Histories', [

@@ -69,5 +69,74 @@
       overflow-x: scroll;
     }
   }
-
+ 
+  .taskbody {
+    padding: 10px 15px;
+    .txt {
+      width: 100%;
+      height: 30px;
+      line-height: 30px;
+      font-size: 20px;
+      padding: 0;
+      border: none;
+      border-bottom: solid #000 3px;
+      overflow-y: hidden;
+      overflow-x: scroll;
+      margin-bottom: 15px;
+    }
+    .goal {
+      display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    .tags {
+      height: auto;
+      padding: 0;
+      margin: 0;
+      
+    div {
+      display: inline-block;
+      margin: 10px;
+      margin-left: 0;
+    }
+      span {
+        display: inline-block;
+        height: 20px;
+        font-size: 0.8em;
+        text-align: center;
+        line-height: 20px;
+        border-radius: 3px;
+        color: #555;
+        background: #eee;
+        padding: 0 5px;
+        margin: 0 10px 10px 0;
+      }
+    }
+    }
+    .interval {
+      margin-top: 10px;
+      .type {
+        height: 30px;
+        line-height: 30px;
+      }
+      .num {
+        margin-top: 15px;
+        input {
+          width: 50px;
+      height: 25px;
+      line-height: 25px;
+      border: solid #000 3px;
+      border-radius: 3px;
+        }
+      }
+      span {
+        font-size: .9em;
+        box-sizing: border-box;
+        padding: 2px 5px;
+        margin: 0 10px 10px 0;
+        border-radius: 3px;
+        border: #000 solid 3px;
+      }
+    }
+  }
 }

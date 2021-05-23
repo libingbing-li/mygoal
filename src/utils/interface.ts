@@ -3,8 +3,8 @@ export interface TaskShow {
   timeId: number;
   endTimeId: number;
   txt: string;
-  tags: Array<string>;
-  check: boolean;
+  tags: Array<GoalShow>;
+  interval: {type: number; num: number;},
 }
 // 目标
 export interface GoalShow {
@@ -40,6 +40,16 @@ export interface ModelEditGoal {
   description: string;
   data: GoalShow;
 }
+export interface ModelEditTask {
+  timeId: number;
+  txt: string;
+  tags: Array<GoalTag>;
+  data: TaskShow;
+  interval: {type: number; num: number;};
+  goaldata: Array<GoalShow>;
+}
+
+
 
 export interface ModelHistoryShow {
   historydata: Array<HistoryShow>;
