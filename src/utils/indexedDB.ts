@@ -198,7 +198,9 @@ class IndexedDB {
     const _this = this;
     const promise = new Promise((resolve, reject) => {
       const nameList = [
-        'NoteShow'
+        'Goals',
+        'Tasks',
+        'Histories'
       ];
       const listObj = Object.create(null);
       let i = 1;
@@ -207,7 +209,7 @@ class IndexedDB {
         //浏览器的事件流机制?就是大任务和小任务那块,异步方法和同步的执行顺序
         p.then((data) => {
           listObj[name] = data ? data : [];
-          if (i === 1) {
+          if (i === nameList.length) {
             resolve(listObj);
           }
           i++;
@@ -263,7 +265,9 @@ class IndexedDB {
     const promise = new Promise((resolve, reject) => {
       console.log(data);
       const nameList = [
-        'NoteShow'
+        'Goals',
+        'Tasks',
+        'Histories'
       ];
       const set = () => {
         let j = 1;
@@ -273,7 +277,7 @@ class IndexedDB {
             if (!success) {
               resolve(false);
             }
-            if (j === 1) {
+            if (j === nameList.length) {
               resolve(true);
             }
             j++;
@@ -288,7 +292,7 @@ class IndexedDB {
           if (!success) {
             resolve(false);
           } else {
-            if (i === 1) {
+            if (i === nameList.length) {
               // 结束清空,开始重置
               set();
             }

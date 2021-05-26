@@ -6,7 +6,7 @@ import { DatePicker } from 'antd';
 import {
 	CheckOutlined,
 } from '@ant-design/icons';
-import { ModelTask, TaskShow } from '../../utils/interface';
+import { GoalShow, ModelTask, TaskShow } from '../../utils/interface';
 import indexedDB from '../../utils/indexedDB';
 import commonStyle from '@/common-styles/common.less';
 import styles from './styles/task.less';
@@ -28,20 +28,44 @@ class Task extends React.Component<ModelTask & {dispatch: any}> {
 		});
 	}
 
+	taskfinish = (task: TaskShow) => {
+		this.props.dispatch({
+			type: 'task/checkTask',
+			payload: {
+				task,
+			}
+		});
+	}
+
+
 
 	showTask = (item: TaskShow) => {
 		return (
-			<div className={styles.taskShow} key={item.timeId} onClick={() => history.push(`/note?timeId=${item.timeId}`)}>
+			<div 
+				className={item.endTimeId === 0 ? styles.taskShow : `${styles.taskShow} ${styles.taskShowCheck}`} 
+				key={item.timeId} 
+				onClick={() => {
+					if(item.endTimeId === 0) {
+					history.push(`/editTask?timeId=${item.timeId}`)
+					}
+				}}
+			>
 				<div className={styles.taskShow_body}>
-					<div className={styles.taskShow_check}>
+					<div 
+					className={styles.taskShow_check}
+					onClick={(e) => {this.taskfinish(item);e.stopPropagation()}}
+					>
+					</div>
+					<div className={styles.taskShow_time}>
+						{moment(item.timeId).format('YYYY-MM-DD')}
 					</div>
 					<div className={styles.taskShow_txt}>
 						{item.txt}
 					</div>
 				</div>
 				<div className={styles.taskShow_tags}>
-					{item.tags.map((tag: string, index: number) => {
-						return <span key={index}>{tag}</span>
+					{item.tags.map((tag: GoalShow, index: number) => {
+						return <span key={index}>{tag.title}</span>
 					})}
 				</div>
 			</div>

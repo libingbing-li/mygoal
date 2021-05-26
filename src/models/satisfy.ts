@@ -63,7 +63,6 @@ export default {
       根据获得的goals获取taskSatisfy
       */
       // taskSatisfy
-      console.log('获取目标数据：', goaldata, taskSatisfy)
       yield put({
         type: 'changeState',
         payload: {

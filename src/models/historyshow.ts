@@ -1,43 +1,37 @@
 import app from '../utils/app';
 import indexedDB from '../utils/indexedDB';
-import { ModelTask, TaskShow } from '../utils/interface';
+import { ModelHistoryShow, HistoryShow } from '../utils/interface';
 
-const data = [
-  {
-    timeId: 0,
-    taskArray: ['测试任务1', '测试任务2'],
-    tags: ['tag1', '目标2'],
-  },
-  {
-    timeId: 0,
-    taskArray: ['测试任务1', '测试任务2'],
-    tags: ['tag1', '目标2'],
-  },
-];
 
 export default {
   namespace: 'historyshow',
   state: {
-    historydata: data,
+    historydata: [],
   },
   reducers: {
-    changeState(state: ModelTask, { payload }: any) {
+    changeState(state: ModelHistoryShow, { payload }: any) {
       return { ...state, ...payload };
     },
   },
   effects: {
     *openDB({ payload }: any, { put, call, select }: any) {
-      // const success: boolean = yield indexedDB.openDataBase();
-      // if(success) {
-      //   yield put({
-      //     type: 'init'
-      //   });
-      // }
+      const success: boolean = yield indexedDB.openDataBase();
+      if(success) {
+        yield put({
+          type: 'init'
+        });
+      }
     },
     *init({ payload }: any, { put, call, select }: any) {
-      const state: ModelTask = yield select((state: any) => state.show);
-      let dbName = 'NoteShow';
-      let notedata: Array<TaskShow> = [];
+      const state: ModelHistoryShow = yield select((state: any) => state.historyshow);
+      let dbName = 'Histories';
+      let historydata: Array<HistoryShow> = yield indexedDB.getData(dbName);
+      yield put({
+        type: 'changeState',
+        payload: {
+          historydata: historydata ? historydata : [],
+        }
+      });
       /*
       直接进入：显示当月日记
       选择日期：根据payload时间区间显示

@@ -21,12 +21,16 @@ import app from '@/utils/app';
 
 
 interface IState {
+	tags: Array<GoalShow>;
+  goaldata: Array<GoalShow>;
 }
 
 
 // 该页面用于编辑展示日记
 class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
 	state: IState = {
+		tags: [],
+		goaldata: [],
 	}
 
 	componentDidMount() {
@@ -46,8 +50,26 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
 		}
 	}
 
+
 	//在本处获取新的props并更新
-	componentWillReceiveProps = (nextProps: any) => {
+	componentWillReceiveProps = (nextProps: ModelEditTask) => {
+		if(this.state.goaldata.length === 0 && this.state.tags.length === 0) {
+			let goaldata = nextProps.goaldata;
+		if(nextProps.data) {
+			nextProps.data.tags.forEach((tag: GoalShow) => {
+				for(let i = 0; i < goaldata.length; i++) {
+					if(goaldata[i].timeId === tag.timeId){
+						goaldata.splice(i, 1);
+						break;
+					}
+				}
+			})
+		} 
+		this.setState({
+			tags: nextProps.data ? nextProps.data.tags : [],
+			goaldata: goaldata,
+		})
+		}
   };
 
 	save = () => {
@@ -56,6 +78,7 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
 		this.props.dispatch({
 			type: 'editTask/save',
 			payload: {
+				tags: this.state.tags,
 				goBack: history.goBack,
 			},
 		});
@@ -63,22 +86,45 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
 
 	remove = () => {
 		this.props.dispatch({
-			type: 'editGoal/remove',
+			type: 'editTask/remove',
 			payload: {
 				goBack: history.goBack,
 			},
 		});
 	}
 
-	addTag = (goal: GoalShow) => {
-		let arr = this.props.tags;
+	addTag = (goal: GoalShow, index: number) => {
+		let arr = this.state.tags;
 		arr.push(goal)
-		this.changeModelState('tags', arr);
+		let arrG = this.state.goaldata;
+		arrG.splice(index,1);
+		this.setState({
+			tags: arr,
+			goaldata: arrG,
+		});
 	}
-	removeTag = (index: number) => {
-		let arr  = this.props.tags;
+	removeTag = (goal: GoalShow, index: number) => {
+		let arr  = this.state.tags;
+		let arrG = this.state.goaldata;
 		arr.splice(index,1);
-		this.changeModelState('tags', arr);
+		arrG.push(goal);
+		this.setState({
+			tags: arr,
+			goaldata: arrG,
+		});
+	}
+
+	selectWeek = (num: number) => {
+		let numArr = this.props.interval.num;
+		if(numArr[num] === 0) {
+			numArr[num] = num;
+		} else {
+			numArr[num] = 0;
+		}
+		this.changeModelState('interval', {
+			type: 2,
+			num: numArr,
+		});
 	}
 
 	changeModelState = (proName: string, data: any) => {
@@ -113,6 +159,7 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
             txt: '',
             tags: [],
 						data: null,
+						interval: {type: 1, num: [0]}
           }
 		});
 		history.goBack();
@@ -147,21 +194,20 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
 					<div className={styles.goal}>
 						
 						<div className={styles.tags}>
-						<div>目标：</div>
-						{this.props.tags.map((goal, index) => {
+						<div>任务关联目标：</div>
+						{this.state.tags.map((goal, index) => {
 							return <span
 							key={goal.timeId}
-								 	onClick={() => this.removeTag(index)}
+								 	onClick={() => this.removeTag(goal, index)}
 							>{goal.title}</span>
 							})}
 						</div>
-						
 						<div className={styles.tags}>
-						<div>已存在目标：</div>
-							{this.props.goaldata.map((goal) => {
+						<div>已设定目标：</div>
+							{this.state.goaldata.map((goal, index) => {
 								 return <span
 								 key={goal.timeId}
-								 	onClick={() => this.addTag(goal)}
+								 	onClick={() => this.addTag(goal, index)}
 								 >{goal.title}</span>
 							})}
 						</div>
@@ -174,21 +220,21 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
 									color: this.props.interval.type === 1 ? '#fff' : '#000',
 									background: this.props.interval.type === 1 ? '#000' : '#fff',
 								}}
-								onClick={() => {this.changeModelState('interval', {type: 1, num: 0})}}
+								onClick={() => {this.changeModelState('interval', {type: 1, num: [0]})}}
 							>无</span>
 							<span 
 								style={{
 									color: this.props.interval.type === 2 ? '#fff' : '#000',
 									background: this.props.interval.type === 2 ? '#000' : '#fff',
 								}}
-								onClick={() => {this.changeModelState('interval', {type: 2, num: 0})}}
+								onClick={() => {this.changeModelState('interval', {type: 2, num: [0,0,0,0,0,0,0,0]})}}
 							>周</span>
 							<span 
 							style={{
 								color: this.props.interval.type === 3 ? '#fff' : '#000',
 								background: this.props.interval.type === 3 ? '#000' : '#fff',
 							}}
-								onClick={() => {this.changeModelState('interval', {type: 3, num: 0})}}
+								onClick={() => {this.changeModelState('interval', {type: 3, num: [0]})}}
 							>间隔天数</span>
 						</div>
 						<div className={styles.num}>
@@ -199,52 +245,52 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
 							>
 								<span
 								style={{
-									color: this.props.interval.num === 1 ? '#fff' : '#000',
-									background: this.props.interval.num === 1 ? '#000' : '#fff',
+									color: this.props.interval.num[1] === 1 ? '#fff' : '#000',
+									background: this.props.interval.num[1] === 1 ? '#000' : '#fff',
 								}}
-								onClick={() => {this.changeModelState('interval', {type: 2, num: 1})}}
+								onClick={() => {this.selectWeek(1)}}
 								>一</span>
 								<span
 								style={{
-									color: this.props.interval.num === 2 ? '#fff' : '#000',
-									background: this.props.interval.num === 2 ? '#000' : '#fff',
+									color: this.props.interval.num[2] === 2 ? '#fff' : '#000',
+									background: this.props.interval.num[2] === 2 ? '#000' : '#fff',
 								}}
-								onClick={() => {this.changeModelState('interval', {type: 2, num: 2})}}
+								onClick={() => {this.selectWeek(2)}}
 								>二</span>
 								<span
 								style={{
-									color: this.props.interval.num === 3 ? '#fff' : '#000',
-									background: this.props.interval.num === 3 ? '#000' : '#fff',
+									color: this.props.interval.num[3] === 3 ? '#fff' : '#000',
+									background: this.props.interval.num[3] === 3 ? '#000' : '#fff',
 								}}
-								onClick={() => {this.changeModelState('interval', {type: 2, num: 3})}}
+								onClick={() => {this.selectWeek(3)}}
 								>三</span>
 								<span
 								style={{
-									color: this.props.interval.num === 4 ? '#fff' : '#000',
-									background: this.props.interval.num === 4 ? '#000' : '#fff',
+									color: this.props.interval.num[4] === 4 ? '#fff' : '#000',
+									background: this.props.interval.num[4] === 4 ? '#000' : '#fff',
 								}}
-								onClick={() => {this.changeModelState('interval', {type: 2, num: 4})}}
+								onClick={() => {this.selectWeek(4)}}
 								>四</span>
 								<span
 								style={{
-									color: this.props.interval.num === 5 ? '#fff' : '#000',
-									background: this.props.interval.num === 5 ? '#000' : '#fff',
+									color: this.props.interval.num[5] === 5 ? '#fff' : '#000',
+									background: this.props.interval.num[5] === 5 ? '#000' : '#fff',
 								}}
-								onClick={() => {this.changeModelState('interval', {type: 2, num: 5})}}
+								onClick={() => {this.selectWeek(5)}}
 								>五</span>
 								<span
 								style={{
-									color: this.props.interval.num === 6 ? '#fff' : '#000',
-									background: this.props.interval.num === 6 ? '#000' : '#fff',
+									color: this.props.interval.num[6] === 6 ? '#fff' : '#000',
+									background: this.props.interval.num[6] === 6 ? '#000' : '#fff',
 								}}
-								onClick={() => {this.changeModelState('interval', {type: 2, num: 6})}}
+								onClick={() => {this.selectWeek(6)}}
 								>六</span>
 								<span
 								style={{
-									color: this.props.interval.num === 7 ? '#fff' : '#000',
-									background: this.props.interval.num === 7 ? '#000' : '#fff',
+									color: this.props.interval.num[7] === 7 ? '#fff' : '#000',
+									background: this.props.interval.num[7] === 7 ? '#000' : '#fff',
 								}}
-								onClick={() => {this.changeModelState('interval', {type: 2, num: 7})}}
+								onClick={() => {this.selectWeek(7)}}
 								>日</span>
 							</div>
 							<div
@@ -254,7 +300,7 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
 							>
 								<input 
 									type="number" 
-									value={this.props.interval.num}
+									value={this.props.interval.num[0]}
 									onChange={(e) => {this.changeModelState('interval', {type: 3, num: e.target.value})}}
 									/>
 							</div>

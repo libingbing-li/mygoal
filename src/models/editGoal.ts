@@ -1,7 +1,7 @@
 import dataBox from '@/pages/modal/dataBox';
 import app from '../utils/app';
 import indexedDB from '../utils/indexedDB';
-import { ModelEditGoal, GoalShow } from '../utils/interface';
+import { ModelEditGoal, GoalShow, TaskShow } from '../utils/interface';
 
 export default {
   namespace: 'editGoal',
@@ -30,7 +30,7 @@ export default {
         console.log('进入编辑');
         // 编辑
         let data: GoalShow = {
-          timeId: state.timeId,
+          timeId: Number(state.timeId),
           endTimeId: state.data.endTimeId,
           title: state.title,
           description: state.description,
@@ -48,7 +48,7 @@ export default {
           endTimeId: 0,
           title: state.title,
           description: state.description,
-          finishDescription: '',
+          finishDescription: [],
           dayTasks: [],
           weekTasks: [],
           monthTasks: [],
@@ -76,7 +76,8 @@ export default {
     *getData({ payload }: any, { put, call, select }: any) {
       const state: ModelEditGoal = yield select((state: any) => state.editGoal);
       let dbName = 'Goals';
-      const data: GoalShow = yield indexedDB.getData(dbName, 'timeId', Number(payload.timeId));
+      const dataArr: Array<GoalShow> = yield indexedDB.getData(dbName, 'timeId', Number(payload.timeId));
+      let data = dataArr[0];
       yield put({
         type: 'changeState',
         payload: {
@@ -98,6 +99,21 @@ export default {
       let dbName = 'Goals';
       const success: boolean = yield indexedDB.remove(dbName, Number(state.timeId));
       if (success) {
+        // 删除对应任务中的tag
+      let taskdata: Array<TaskShow> = yield indexedDB.getData('Tasks', 'timeId');
+      let newTasks: Array<TaskShow> = [];
+      taskdata.forEach((task: TaskShow) => {
+        for(let i = 0; i < task.tags.length; i++){
+          if(task.tags[i].timeId === Number(state.timeId)) {
+            task.tags.splice(i, 1);
+            newTasks.push(task);
+            break;
+          }
+        }
+      })
+      for(let i = 0; i < newTasks.length;  i++){
+        let success: boolean = yield indexedDB.put('Tasks', newTasks[i])
+      }
         yield put({
           type: 'changeState',
           payload: {

@@ -7,7 +7,6 @@ export default {
   state: {
     timeId: 0,
     txt: '',
-    tags: [],
     interval:{type: 1, num: 0},
     data: null,
     goaldata: [],
@@ -31,22 +30,40 @@ export default {
         console.log('进入编辑');
         // 编辑
         let data: TaskShow = {
-          timeId: state.timeId,
+          timeId: Number(state.timeId),
           endTimeId: state.data.endTimeId,
           txt: state.txt,
-          tags: state.tags,
+          tags: payload.tags,
           interval:state.interval,
         };
         success = yield indexedDB.put(dbName, data);
       } else {
         console.log('进入添加');
         // 添加
+        let timeId = new Date().getTime();
+        if(state.interval.type === 2) {
+          let week = new Date().getDay(); //0-6 0是周天
+          if(week === 0) {week = 7;}
+          if(state.interval.num[week] !== week) {
+            // 不是当前天 eg： 在周一建立的任务，并没有设置周一循环，那么就更改timeId到对应周数
+            for(let i = 1; i < 7; i++) {
+              week++;
+              if(week === 8) {
+                week = 1;
+              }
+              if(state.interval.num[week] !== 0) {
+                timeId = timeId + i * 24 * 60 * 60 * 1000;
+                break;
+              }
+            }
+          }
+        }
         let data: TaskShow = {
-          timeId: new Date().getTime(),
+          timeId: timeId,
           endTimeId: 0,
           txt: state.txt,
-          tags: state.tags,
-          interval:state.interval,
+          tags: payload.tags,
+          interval: state.interval,
         };
         success = yield indexedDB.add(dbName, data);
       }
@@ -71,13 +88,13 @@ export default {
     *getData({ payload }: any, { put, call, select }: any) {
       const state: ModelEditTask = yield select((state: any) => state.editTask);
       let dbName = 'Tasks';
-      const data: TaskShow = yield indexedDB.getData(dbName, 'timeId', Number(payload.timeId));
+      const dataArr: Array<TaskShow> = yield indexedDB.getData(dbName, 'timeId', Number(payload.timeId));
+      let data = dataArr[0];
       yield put({
         type: 'changeState',
         payload: {
           timeId: payload.timeId,
           txt: data.txt,
-          tags: data.tags,
           interval: data.interval,
           data,
         },
@@ -93,6 +110,7 @@ export default {
       // 选择库名
       let dbName = 'Tasks';
       const success: boolean = yield indexedDB.remove(dbName, Number(state.timeId));
+      console.log(success,state.timeId)
       if (success) {
         yield put({
           type: 'changeState',

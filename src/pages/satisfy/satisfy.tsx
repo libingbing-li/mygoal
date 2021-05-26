@@ -15,7 +15,6 @@ import app from '@/utils/app';
 
 const data: any = [
 	'第一周',
-	'4.11',
 	'4月',
 	'4.13',
 	'4.14',
@@ -34,6 +33,8 @@ const data: any = [
 
 interface IState {
 	timeArray: Array<string>;
+	timeType: number;
+	timeStr: string;
 	goalTimeShowWidth: string;
 	top: string;
 	left: string;
@@ -45,7 +46,7 @@ const goaldata = {
   endTimeId: 0,
   title: '',
   description: '',
-  finishDescription: '',
+  finishDescription: [],
   dayTasks: [],
   weekTasks: [],
   monthTasks: [],
@@ -56,6 +57,8 @@ const goaldata = {
 class Satisfy extends React.Component< ModelSatisfy & { dispatch: any}> {
 	state: IState = {
 		timeArray: data,
+		timeType: 1,
+		timeStr: new Date().getFullYear() + ' · 日',
 		goalTimeShowWidth: '360px',
 		top: '0px',
 		left: '0px',
@@ -63,6 +66,7 @@ class Satisfy extends React.Component< ModelSatisfy & { dispatch: any}> {
 	}
 
 	componentDidMount = () => {
+		this.setTimeType(1);
     // 获取时间轴，目标轴，显示表
 		const timeInterval: any = document.querySelector(`#timeInterval`);
 		const tBox: any = timeInterval?.parentElement;
@@ -237,18 +241,57 @@ class Satisfy extends React.Component< ModelSatisfy & { dispatch: any}> {
     });
   }
 
+	setTimeType = (type: number ) => {
+		if(type === 0) {
+			type = this.state.timeType;
+			type++;
+		}
+		if(type === 4) {
+			type = 1;
+		}
+		let str = '';
+		switch(type) {
+			case 1:
+				str = new Date().getFullYear() + ' · 日';
+				this.getTimeArray(1);
+				this.goalTimeShow(1);
+				break;
+			case 2:
+				str = new Date().getFullYear() + ' · 周';
+				this.getTimeArray(2);
+				this.goalTimeShow(2);
+				break;
+			case 3: 
+			str = new Date().getFullYear() + ' · 月';
+			this.getTimeArray(3);
+				this.goalTimeShow(3);
+			 break;
+		}
+		this.setState({
+			timeType: type,
+			timeStr: str,
+		})
+		let nowTime = new Date().getTime(); //获取到今天的时间，默认展示30天
+	}
+
+	getTimeArray = (type: number) => {
+		// day: 30 week: 24 month: 30
+	}
+
+	goalTimeShow = (type: number) => {}
+
 	setData = (goal: GoalShow) => {
 		console.log('setData');
 		this.setState({
 			data: goal,
 		})
-		console.log(this.state)
 		const dataBox: any = document.querySelector('#dataBox');
-		if(dataBox.style.bottom === '0px') {
-			dataBox.style.bottom = '-50vh';
-		} else {
-			dataBox.style.bottom = '0px';
-		}
+		dataBox.style.bottom = '0px';
+	}
+
+	dataBoxClose = () => {
+		const dataBox: any = document.querySelector('#dataBox');
+		dataBox.style.bottom = '-50vh';
 	}
 
 
@@ -257,7 +300,10 @@ class Satisfy extends React.Component< ModelSatisfy & { dispatch: any}> {
 		return (
       <div className={styles.satisfy}>
         <div className={styles.dateBar}>
-					<div className={styles.year}>2021</div>
+					<div 
+						className={styles.year}
+						onClick={() => {this.setTimeType(0)}}
+					>{this.state.timeStr}</div>
 					<div className={styles.timeIntervalBox}>
 					<div 
 						className={styles.timeInterval} 
@@ -271,8 +317,6 @@ class Satisfy extends React.Component< ModelSatisfy & { dispatch: any}> {
 					})}
 					</div>
 					</div>
-					
-					<div className={styles.timeIntervalSet}>日</div>
 				</div>
 				<div className={styles.body}>
 					<div className={styles.goalBox}>
@@ -314,7 +358,10 @@ class Satisfy extends React.Component< ModelSatisfy & { dispatch: any}> {
 				</div>
 				</div>
 				</div>
-				<GoalBox data={this.state.data}></GoalBox>
+				<GoalBox 
+					data={this.state.data}
+					close={this.dataBoxClose}
+				></GoalBox>
 			</div>
 		);
 	}

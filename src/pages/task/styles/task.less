@@ -4,7 +4,6 @@
   align-items: center;
   width: 100vw;
   height: 100%;
-  margin: 15px 0;
   overflow-y: scroll;
   overflow-x: hidden;
   .taskShow {
@@ -26,11 +25,22 @@
         font-size: 5px;
         margin-right: 10px;
         border: solid 2px #000;
+        margin-top: 7px;
+      }
+      .taskShow_time {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        font-size: 10px;
       }
       .taskShow_txt {
         flex: 1 1 auto;
         padding: 5px;
         border-bottom: solid #ddd 1px;
+        overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    margin-top: 7px;
       }
     }
     .taskShow_tags {
@@ -50,6 +60,19 @@
         background: #eee;
         padding: 0 5px;
         margin: 0 10px 0 0;
+      }
+    }
+  }
+  .taskShowCheck {
+    border-color: #ddd;
+    color: #ddd;
+    .taskShow_check {
+      background: #eee;
+      border-color: #ddd !important;
+    }
+    .taskShow_tags {
+      span {
+        color: #ccc;
       }
     }
   }

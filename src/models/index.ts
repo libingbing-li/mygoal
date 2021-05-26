@@ -1,308 +1,245 @@
 import LZString from 'lz-string';
 import app from '../utils/app';
-import { AllData } from '../utils/interface'; 
+import { GoalShow, ModelIndex, TaskShow, HistoryShow } from '../utils/interface';
 import indexedDB from '../utils/indexedDB';
 
 
-interface IState {
-  classId: number,
-  data: any,
-}
 export default {
   namespace: 'index',
   state: {
-    time: 0, //时间戳-id
-    classId: 1, //分类: 1   //1食材 2菜谱 3调味 4方便食物
-    classValue: '默认', //小分类
-    name: '', //名称
-    day: '', //保鲜天数
-    num: '', //个数
-    weight: '', //重量
-    value: '', //价格
-    note: '', //备注
-    data: null, //编辑时的原数据
-    isBasket: false, //basket-是否显示
-    noteStr: 'info', //开启note弹窗时的str标识
+
   },
   reducers: {
-    changeState(state: FoodIngredient & IState, { payload }: any) {
-      return {...state, ...payload};
+    changeState(state: ModelIndex, { payload }: any) {
+      return { ...state, ...payload };
     },
   },
   effects: {
-    *addItem({ payload }: any, {put, call, select}: any) {
-      /* 
-      put: 触发action yield put({ type: 'todos/add', payload: 'Learn Dva'});
-      call: 调用异步逻辑, 支持Promise const result = yield call(fetch, '/todos');
-      select: 从state中获取数据,属性名是命名空间的名字 const todos = yield select(state => state.todos);
+    *openDB({ payload }: any, { put, call, select }: any) {
+      const success: boolean = yield indexedDB.openDataBase();
+      if (success) {
+        yield put({
+          type: 'init'
+        });
+      }
+    },
+    *init({ payload }: any, { put, call, select }: any) {
+      // 获取当天的零点时间
+      let nowTime = new Date(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`).getTime();
+      // 测试用，修改到第二天的零点，以便刷新测试
+      nowTime = nowTime + 24 * 60 * 60 * 1000;
+      /*
+      对已完成的任务进行归纳
       */
-      const state = yield select((state: any) => state.index);
-      if(state.name === '' ||
-        state.day === '' ||
-        state.num === '' ||
-        state.weight === '' || 
-        state.value === ''
-        ) {
-          app.info('请填写所有数据');
-          return;
-        }
-        if(state.day <= 0 ||
-        state.num <= 0 ||
-        state.weight <= 0 || 
-        state.value <= 0
-        ) {
-          app.info('请填写正确格式的数据');
-          return;
-        }
-        // 选择库名
-        let dbStr = '';
-        switch(state.classId) {
-          case 1: dbStr = 'foodIngredient'; break;
-          case 2: dbStr = 'flavoring'; break;
-          case 3: dbStr = 'convenientFood'; break;
-        }
-      if(state.time) {
-        // 编辑
-        if(state.classId !== state.data.classId) {
-          // 改变了大类别 需要删除旧数据,添加新数据
-          const newData = {
-            classId: state.classId,
-            time: state.time,
-            classValue: state.classValue,
-            name: state.name,
-            day: Number(state.day),
-            num: Number(state.num),
-            weight: Number(state.weight),
-            value: Number(state.value),
-            note: state.note,
-          }
-          yield put({
-            type: 'remove',
-            payload: {
-              close: payload,
-              data: state.data,
+      console.log('index/init')
+      //  获取完成任务列表
+      let tasksFinish: Array<TaskShow> = yield indexedDB.getData('Tasks', 'endTimeId', undefined, 1, nowTime);
+      if (tasksFinish === null) {
+        tasksFinish = [];
+      }
+      for (let i = 0; i < tasksFinish.length; i++) {
+        // 完成的任务列表
+        // 完成任务的零点时间
+        let dayTime = new Date(`${new Date(tasksFinish[i].endTimeId).getFullYear()}-${new Date(tasksFinish[i].endTimeId).getMonth() + 1}-${new Date(tasksFinish[i].endTimeId).getDate()}`).getTime();
+        let week = new Date(tasksFinish[i].endTimeId).getDay();// 0-6, 0表示周天
+        if(week === 0) {week = 7;}
+        let weekTime = dayTime - (week - 1) * 24 * 60 * 60 * 1000;
+        let monthTime = new Date(`${new Date(tasksFinish[i].endTimeId).getFullYear()}-${new Date(tasksFinish[i].endTimeId).getMonth() + 1}-1`).getTime();
+        let yearTime = new Date(`${new Date(tasksFinish[i].endTimeId).getFullYear()}-1-1`).getTime();
+
+        console.log(tasksFinish[i].tags)
+        // 对当前任务的tag进行处理
+        for (let j = 0; j < tasksFinish[i].tags.length; j++) {
+          // 该完成任务的目标列表
+          let goalArr: Array<GoalShow> = yield indexedDB.getData('Goals', 'timeId', tasksFinish[i].tags[j].timeId);
+          let goal = goalArr[0];
+          // 对记录任务完成数组进行删除整理
+          let yearIndex = 0;
+          if (goal.dayTasks.length > 30 || goal.weekTasks.length > 24 || goal.monthTasks.length > 12) {
+            if (goal.finishDescription.length === 0) {
+              goal.finishDescription.push({
+                year: yearTime,
+                month: 0,
+                week: 0,
+                day: 0,
+              });
+            } else if (goal.finishDescription[goal.finishDescription.length - 1].year < dayTime) {
+              yearIndex = goal.finishDescription.length;
+              goal.finishDescription.push({
+                year: yearTime,
+                month: 0,
+                week: 0,
+                day: 0,
+              });
+            } else {
+              // goal.finishDescription[goal.finishDescription.length - 1].year >= yearTime
+              for (let k = goal.finishDescription.length - 1; k >= 0; k--) {
+                if (goal.finishDescription[k].year === yearTime) {
+                  yearIndex = k;
+                  break;
+                }
+              }
             }
-          });
-          const success = yield indexedDB.add(dbStr, newData); 
-          if(success) {
-            payload();
-            yield put({
-              type: 'info/init',
-            });
-            yield put({
-              type: 'time/init'
-            });
-          } else {
-            app.info('数据添加失败');
+          }
+          if (goal.monthTasks.length > 12) {
+            goal.monthTasks.splice(0, goal.monthTasks.length - 12);
+            goal.finishDescription[yearIndex].month = goal.finishDescription[yearIndex].month + (goal.monthTasks.length - 12);
+          }
+          if (goal.weekTasks.length > 24) {
+            goal.weekTasks.splice(0, goal.weekTasks.length - 24);
+            goal.finishDescription[yearIndex].week = goal.finishDescription[yearIndex].week + (goal.weekTasks.length - 24);
+          }
+          if (goal.dayTasks.length > 30) {
+            goal.dayTasks.splice(0, goal.dayTasks.length - 30);
+            goal.finishDescription[yearIndex].day = goal.finishDescription[yearIndex].day + (goal.dayTasks.length - 30);
+          }
+
+          // 对记录任务完成数组进行添加
+          if (goal.dayTasks.length === 0 || goal.dayTasks[goal.dayTasks.length - 1] < dayTime) {
+            // 当该数组不存在零点时间，或最后一个零点时间（最大的那个 小于当前任务的零点时间，就添加进去
+            goal.dayTasks.push(dayTime);
+          }
+          if (goal.weekTasks.length === 0 || goal.weekTasks[goal.weekTasks.length - 1] < weekTime) {
+            // 当该数组不存在零点时间，或最后一个零点时间（最大的那个 小于当前任务的零点时间，就添加进去
+            goal.weekTasks.push(weekTime);
+          }
+          if (goal.monthTasks.length === 0 || goal.monthTasks[goal.monthTasks.length - 1] < monthTime) {
+            // 当该数组不存在零点时间，或最后一个零点时间（最大的那个 小于当前任务的零点时间，就添加进去
+            goal.monthTasks.push(monthTime);
+          }
+
+          console.log(goal);
+
+          // 将新的goal替换原本indexedDB中的goal
+          const successG: boolean = yield indexedDB.put('Goals', goal);
+          console.log('index-init：刷新目标数据 - ' + successG);
+        }
+
+        // 将任务添加到history中
+        let HistoriesArr: Array<HistoryShow> = yield indexedDB.getData('Histories', 'timeId', dayTime);
+        if (HistoriesArr === null) {
+          HistoriesArr = [];
+        }
+
+        let historyIndex: number | null = 0;
+        if (HistoriesArr.length === 0) {
+          let addH: boolean = yield indexedDB.add('Histories', {
+            timeId: dayTime,
+            tasks: [],
+            goals: [],
+          })
+          if (!addH) {
+            historyIndex = null;
+          }
+        } else if (HistoriesArr[HistoriesArr.length - 1].timeId < dayTime) {
+          historyIndex = HistoriesArr.length;
+          let addH: boolean = yield indexedDB.add('Histories', {
+            timeId: dayTime,
+            tasks: [],
+            goals: [],
+          })
+          if (!addH) {
+            historyIndex = null;
           }
         } else {
-          const success = yield indexedDB.put(dbStr, {
-            classId: state.classId,
-            time: state.time,
-            classValue: state.classValue,
-            name: state.name,
-            day: Number(state.day),
-            num: Number(state.num),
-            weight: Number(state.weight),
-            value: Number(state.value),
-            note: state.note,
-          }, state.data); 
-          if(success){
-            payload();
-            yield put({
-              type: 'info/init',
-            });
-            yield put({
-              type: 'time/init'
-            });
-          } else {
-            app.info('数据更新失败');
+          // goal.finishDescription[goal.finishDescription.length - 1].year >= yearTime
+          for (let k = HistoriesArr.length - 1; k >= 0; k--) {
+            if (HistoriesArr[k].timeId === dayTime) {
+              historyIndex = k;
+              break;
+            }
           }
         }
-      } else {
-        // 添加
-      let now = new Date();
-      const success = yield indexedDB.add(dbStr, {
-        classId: state.classId,
-        time: now.getTime(),
-        classValue: state.classValue,
-        name: state.name,
-        day: Number(state.day),
-        num: Number(state.num),
-        weight: Number(state.weight),
-        value: Number(state.value),
-        note: state.note,
-      }); 
-      if(success) {
-        payload();
-        yield put({
-          type: 'info/init',
-        });
-        yield put({
-          type: 'time/init'
-        });
-      } else {
-        app.info('数据添加失败');
-      }
-      }
-    },
-    *remove({ payload }: any, {put, call, select}: any) {
-      /* 
-      put: 触发action yield put({ type: 'todos/add', payload: 'Learn Dva'});
-      call: 调用异步逻辑, 支持Promise const result = yield call(fetch, '/todos');
-      select: 从state中获取数据,属性名是命名空间的名字 const todos = yield select(state => state.todos);
-      */
-      let state = yield select((state: any) => state.index);
-      if(payload?.data) {
-        state = payload.data;
-      }
-      // 选择库名
-      let dbStr = '';
-      switch(state.classId) {
-        case 1: dbStr = 'foodIngredient'; break;
-        case 2: dbStr = 'flavoring'; break;
-        case 3: dbStr = 'convenientFood'; break;
-      }
-      const success = yield indexedDB.remove(dbStr, state.time, state.name, state.num);
-      if(success) {
-        if(payload) {
-          if(payload.data) {
-            payload.close();
-          } else {
-            payload();
+
+        if (historyIndex !== null) {
+          let HistoriesArr: Array<HistoryShow> = yield indexedDB.getData('Histories', 'timeId', dayTime);
+          HistoriesArr[historyIndex].tasks.push(tasksFinish[i].txt); //为历史记录添加任务
+
+          let addHistoryGoal = true; //是否为历史记录添加目标 - 不重复则添加
+          for (let j = 0; j < tasksFinish[i].tags.length; j++) {
+            for (let k = 0; k < HistoriesArr[historyIndex].goals.length; k++) {
+              if (HistoriesArr[historyIndex].goals[k] === tasksFinish[i].tags[j].title) {
+                addHistoryGoal = false;
+                break;
+              }
+            }
+            if (addHistoryGoal) {
+              HistoriesArr[historyIndex].goals.push(tasksFinish[i].tags[j].title);
+            }
+          }
+
+          console.log(HistoriesArr[historyIndex]);
+          // 将新的history替换原本indexedDB中的history
+          const successH: boolean = yield indexedDB.put('Histories', HistoriesArr[historyIndex]);
+          console.log('index-init：刷新历史数据 - ' + successH);
+        }
+
+        // 根据任务的循环设定新建下一个任务           
+        let intervalNum = 0;
+        switch (tasksFinish[i].interval.type) {
+          case 1: break;
+          case 2:
+            // 周
+            let weekNew = new Date(tasksFinish[i].timeId).getDay(); //0-6 0周天
+            console.log(weekNew, 'weekNew');
+            if(weekNew === 0) {weekNew = 7;}
+            for (let j = 1; j <= 7; j++) {
+              weekNew++;
+              if(weekNew === 8) {
+                weekNew = 1;
+              }
+              if (Number(tasksFinish[i].interval.num[weekNew]) !== 0) {
+                intervalNum = j;
+                break;
+              }
+            }
+            break;
+          case 3:
+            // 间隔
+            intervalNum = Number(tasksFinish[i].interval.num[0]) + 1;
+            console.log(intervalNum)
+            break;
+        }
+        console.log(intervalNum)
+        if (intervalNum !== 0) {
+          const removeTask: boolean = yield indexedDB.remove('Tasks', tasksFinish[i].timeId);
+          if (removeTask) {
+            let newTask = tasksFinish[i];
+            newTask.timeId = tasksFinish[i].timeId + intervalNum * 24 * 60 * 60 * 1000;
+            newTask.endTimeId = 0;
+            const addTask: boolean = yield indexedDB.add('Tasks', newTask);
+            if (addTask) {
+
+
+              console.log('添加循环任务成功，删除已完成任务成功');
+              yield put({
+                type: 'task/init',
+              })
+              // yield put({
+              //   type: 'history/init',
+              // })
+              yield put({
+                type: 'satisfy/init',
+              })
+
+            }
+          }
+        } else {
+          const removeTask: boolean = yield indexedDB.remove('Tasks', tasksFinish[i].timeId);
+          if (removeTask) {
+            console.log('删除已完成任务成功');
+            yield put({
+              type: 'task/init',
+            })
+            // yield put({
+            //   type: 'history/init',
+            // })
+            yield put({
+              type: 'satisfy/init',
+            })
           }
         }
-        yield put({
-          type: 'info/init',
-        });
-        yield put({
-          type: 'time/init'
-        });
-      } else {
-        app.info('数据删除失败');
       }
-    },
-    *getOtherInfoByName({ payload }: any, {put, call, select}: any) {
-      const state = yield select((state: any) => state.index);
-      if(state.time) {
-        return;
-      }
-      let arr = ['foodIngredient', 'flavoring', 'convenientFood'];
-      for(let dbStr of arr) {
-        let data = yield indexedDB.getOtherInfo(dbStr, state.name);
-        if(data) {
-          data.value = app.getTowPointNum(data.value);
-          data.weight = app.getTowPointNum(data.weight);
-          yield put({
-            type: 'changeState',
-            payload: {...data, time: 0, note: ''},
-          });
-          break;
-        } else {
-          data = {
-            time: 0, //时间戳-id
-            classValue: '默认', //小分类
-            day: '', //保鲜天数
-            num: '', //个数
-            weight: '', //重量
-            value: '', //价格
-            note: '', //备注
-          };
-          yield put({
-            type: 'changeState',
-            payload: {...data},
-          });
-        }
-      }
-    },
-    *saveJson({ payload }: any, {put, call, select}: any) {
-      // 文件保存
-      //下载函数
-      // const downloadFile = (filename: string, data: Blob) => {
-      //   if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-      //     window.navigator.msSaveOrOpenBlob(data, filename)
-      //   } else {
-      //     const anchor = document.createElement('a')
-      //     anchor.href = window.URL.createObjectURL(data)
-      //     anchor.download = filename
-      //     anchor.click()
-      //     window.URL.revokeObjectURL(data)
-      //   }
-      // }
-      //导出函数，name为导出的文件名，data为导出的json数据
-      // const exportData = (name: string, data: string) => {
-      //   const content = window.btoa(encodeURIComponent(JSON.stringify(data)))
-      //   const blobData = new Blob([content], { type: 'application/octet-stream' })
-      //   const filename = `${name}.json` //可以自定义后缀名
-      //   downloadFile(filename, blobData)
-      // }
-      // const nameStr = 'MyFoodAllData' + new Date().toString();
-      // const jsonData = yield indexedDB.getAllData();
-      // exportData(nameStr, JSON.stringify(jsonData));
-
-      // 文本保存
-      const nameStr = 'MyFoodAllData' + new Date().toString();
-      const jsonData = yield indexedDB.getAllData();
-      const setInput: any = document.querySelector('#setInput');
-      console.log('原文本长度',JSON.stringify(jsonData).length);
-      const compressed = LZString.compressToBase64(JSON.stringify(jsonData));
-      console.log('压缩后长度',compressed.length);
-      setInput.value = compressed;
-      setInput?.select();
-      if (document.execCommand('copy')) {
-        document.execCommand('copy');
-        console.log('复制成功');
-      }
-    },
-    *importJson({ payload }: any, {put, call, select}: any) {
-      // 读取文件
-      // 获取读取我文件的File对象
-      // console.log(payload);
-      // const name = payload.selectedFile.name; //读取选中文件的文件名
-      // const size = payload.selectedFile.size; //读取选中文件的大小
-      // console.log("文件名:" + name + "大小:" + size);
-      // const reader = new FileReader(); //这是核心,读取操作就是由它完成.
-      // reader.readAsText(payload.selectedFile); //读取文件的内容,也可以读取文件的URL
-      // reader.onload = () => {
-      //   const result = reader.result;
-      //   //当读取完成后回调这个函数,然后此时文件的内容存储到了result中,直接操作即可
-      //   if(result){
-      //     const jsonData = JSON.parse(decodeURIComponent(window.atob(result)));
-      //     console.log(jsonData);
-      //     // const success = yield 
-      //     indexedDB.setAllData(JSON.parse(jsonData));
-      //   // if(success) {
-      //   //   yield put({type: 'now/init'});
-      //   //   yield put({type: 'info/init'});
-      //   //   yield put({type: 'time/init'});
-      //   // } else {
-      //   //   app.info('导入失败');
-      //   // }
-      //   } else {
-      //     app.info('该文件为空文件');
-      //   }
-      // }
-
-      // 读取文本
-      const setInput: any = document.querySelector('#setInput');
-      const data = setInput?.value;
-      // 解码
-      const str = LZString.decompressFromBase64(data) || '';
-      // const instanceofAllData = (data: any): data is AllData => {
-
-      // }
-      // if(instanceofAllData(JSON.parse(data))) {
-        const success = yield indexedDB.setAllData(JSON.parse(str));
-        if(success) {
-          yield put({type: 'now/init'});
-          yield put({type: 'info/init'});
-          yield put({type: 'time/init'});
-        } else {
-          app.info('导入失败');
-        }
-      // } else {
-      //   app.info('请粘贴正确格式的文本');
-      // }
     },
   }
 };

@@ -1,0 +1,51 @@
+.dataBox {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  left: 0;
+  box-sizing: border-box;
+  width: 100vw;
+  height: 50vh;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  transition: bottom .5s;
+  border: solid 3px #000;
+  border-bottom: none;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  padding: 15px;
+  background: #fff;
+  div {
+    margin: 5px 0;
+  }
+  .titleBox {
+    position: relative;
+    display: flex;
+  }
+  .title {
+    flex: 1 1 auto;
+    font-size: 25px;
+    width: 70%;
+    overflow-y: hidden;
+    overflow-x: scroll;
+      white-space: nowrap;
+  }
+  .time {
+    flex: 0 0 auto;
+    margin-left: 10px;
+  }
+  .btns {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .description {
+    flex: 1 1 auto;
+  }
+  .description, .finish {
+    background: #eeefff;
+    border-radius: 10px;
+    padding: 10px;
+    white-space: pre-line
+  }
+}

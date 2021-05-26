@@ -2,6 +2,7 @@ import React from 'react';
 import moment from 'moment';
 import {history} from 'umi';
 import { connect, EffectsCommandMap, Model } from 'dva';
+import KeepAlive, { AliveScope } from 'react-activation';
 import {
 	UnorderedListOutlined,
 	HighlightOutlined,
@@ -39,6 +40,9 @@ class Index extends React.Component<ModelIndex & {dispatch: any}> {
 
 	componentDidMount = async () => {
 		moment.locale('zh-cn'); 
+		this.props.dispatch({
+			type: 'index/openDB'
+		})
 	}
 
 
@@ -120,9 +124,9 @@ class Index extends React.Component<ModelIndex & {dispatch: any}> {
 				// 	type: 'info/init'
 				// });
 			} else if(state.nowPage - 1 === 1) {
-				// this.props.dispatch({
-				// 	type: 'time/init'
-				// });
+				this.props.dispatch({
+					type: 'task/init'
+				});
 			} else {
 				this.props.dispatch({
 					type: 'satisfy/init'
@@ -147,12 +151,12 @@ class Index extends React.Component<ModelIndex & {dispatch: any}> {
 		}
 		this.setState((state: any) => {
 			if(state.nowPage + 1 === 2) {
-				this.props.dispatch({
-					// type: 'info/init'
-				});
+				// this.props.dispatch({
+				// 	// type: 'info/init'
+				// });
 			} else if(state.nowPage + 1 === 1) {
 				this.props.dispatch({
-					// type: 'time/init'
+					type: 'task/init'
 				});
 			} else {
 				this.props.dispatch({
@@ -256,7 +260,7 @@ class Index extends React.Component<ModelIndex & {dispatch: any}> {
 					}}  
 				>
 					<UnorderedListOutlined onClick={this.sidebarShow}/>
-					<span>MyNote</span>
+					<span>MyTask</span>
 					{/* <span onClick={this.checkTab}>
 						{this.state.nowPage === 1 ? 'MyNote' : 'Satisfy'}
 					</span> */}
@@ -308,6 +312,7 @@ class Index extends React.Component<ModelIndex & {dispatch: any}> {
 		);
 	}
 }
+
 
 export default connect((state: any) => ({
 	...state.index,

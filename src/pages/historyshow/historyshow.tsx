@@ -23,9 +23,9 @@ class HistoryShowList extends React.Component<ModelHistoryShow & {dispatch: any}
 	}
 
 	componentDidMount = () => {
-		// this.props.dispatch({
-		// 	type: 'show/openDB'
-		// });
+		this.props.dispatch({
+			type: 'historyshow/openDB'
+		});
 	}
 
 	showHistory = (item: HistoryShow) => {
@@ -33,15 +33,15 @@ class HistoryShowList extends React.Component<ModelHistoryShow & {dispatch: any}
 			<div className={styles.historyShowBox} key={item.timeId}>
 				<div className={styles.historyShow_time}>
 				<CheckOutlined />
-					{moment(item.timeId).fromNow()}
+					{moment(item.timeId).format('YYYY-MM-DD')}
 				</div>
 				<div className={styles.historyShow_data}>
-					{item.taskArray.map((task: string, index: number) => {
+					{item.tasks.map((task: string, index: number) => {
 						return <div key={index}>{task}</div>
 					})}
 				</div>
 				<div className={styles.historyShow_tags}>
-					{item.tags.map((tag: string, index: number) => {
+					{item.goals.map((tag: string, index: number) => {
 						return <span key={index}>{tag}</span>
 					})}
 				</div>
