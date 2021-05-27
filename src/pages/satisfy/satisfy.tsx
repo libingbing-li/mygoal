@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import { connect, EffectsCommandMap, Model } from 'dva';
 import {
 	UnorderedListOutlined,
@@ -13,33 +14,8 @@ import commonStyle from '@/common-styles/common.less';
 import styles from './styles/satisfy.less';
 import app from '@/utils/app';
 
-const data: any = [
-	'第一周',
-	'4月',
-	'4.13',
-	'4.14',
-	'4.10',
-	'4.11',
-	'4.12',
-	'4.13',
-	'4.14',
-	'4.10',
-	'4.11',
-	'4.12',
-	'4.13',
-	'4.14',
-]
 
 
-interface IState {
-	timeArray: Array<string>;
-	timeType: number;
-	timeStr: string;
-	goalTimeShowWidth: string;
-	top: string;
-	left: string;
-	data: GoalShow | null; //当前选中的目标
-}
 
 const goaldata = {
 	timeId: 0,
@@ -53,20 +29,40 @@ const goaldata = {
 };
 
 
+interface IState {
+	timeArray: Array<Array<number>>;
+	timeIndex: number;
+	timeStr: Array<string>;
+	goalTimeShowWidth: number;
+	goalTimeShowHeight: number;
+	top: string;
+	left: string;
+	data: GoalShow | null; //当前选中的目标
+	taskSatisfy: Array<boolean>;
+}
+
+
 // 用于展示tag数和时间的分布
 class Satisfy extends React.Component< ModelSatisfy & { dispatch: any}> {
 	state: IState = {
-		timeArray: data,
-		timeType: 1,
-		timeStr: new Date().getFullYear() + ' · 日',
-		goalTimeShowWidth: '360px',
+		timeArray: [[],[],[]],
+		timeIndex: 0,
+		timeStr: [' · 日', ' · 周', ' · 月'],
+		goalTimeShowWidth: 0,
+		goalTimeShowHeight: 0,
 		top: '0px',
 		left: '0px',
 		data: goaldata,
+		taskSatisfy: [],
 	}
 
 	componentDidMount = () => {
-		this.setTimeType(1);
+		this.props.dispatch({
+			type: 'satisfy/init',
+		});
+	}
+
+	addTouch = (w: number, h: number) => {
     // 获取时间轴，目标轴，显示表
 		const timeInterval: any = document.querySelector(`#timeInterval`);
 		const tBox: any = timeInterval?.parentElement;
@@ -78,7 +74,8 @@ class Satisfy extends React.Component< ModelSatisfy & { dispatch: any}> {
 		时间轴： 左右移动时间轴，可以更改时间轴的left，同时也将显示表的left更改
 		*/
 		// 移动元素和包裹盒子的宽
-    const tw: any = timeInterval?.offsetWidth; //真实宽度
+    // const tw: any = timeInterval?.scrollWidth; //真实宽度 当一次性获取的数据超出可视页面后，有时候会得到正确数据，有时候会得到0
+		const tw: any = w;
 		const tBw: any = tBox?.clientWidth; //可见宽度
 		// 获取手指第一次的坐标
 		let tX = 0;
@@ -88,7 +85,7 @@ class Satisfy extends React.Component< ModelSatisfy & { dispatch: any}> {
 		// 获取当前的left (如果为auto的话，就要从当前的right来计算left值了 *本处不做auto预防处理，是因为left通过state中数据计算)
 		let tleft = Number(timeInterval.style.left.substring(0,timeInterval.style.left.length - 2)); 
     timeInterval?.addEventListener('touchmove', (e: any) => {
-			console.log(tw, tBw)
+			// console.log('timeInterval',tw, tBw)
 			if(tw <= tBw) return; //如果内容盒子的宽度不如包裹盒子长，那么就不能移动
       // 记录移动的距离
       let x = e.changedTouches[0].clientX - tX;
@@ -120,7 +117,8 @@ class Satisfy extends React.Component< ModelSatisfy & { dispatch: any}> {
 		目标轴： 上下移动时间轴，可以更改目标轴的top，同时也将显示表的top更改
 		*/
 		// 移动元素和包裹盒子的宽
-    const gh: any = goalBox?.offsetHeight; //真实高度
+    // const gh: any = goalBox?.offsetHeight; //真实高度  理由同tw
+		const gh: any = h;
 		const gBh: any = gBox?.clientHeight; //可见高度
 		// 获取手指第一次的坐标
 		let gY = 0;
@@ -143,13 +141,11 @@ class Satisfy extends React.Component< ModelSatisfy & { dispatch: any}> {
 			this.setState({
 				top: gtop + 'px',
 			})
-			console.log('goalbox'+gtop);
     });
     goalBox?.addEventListener('touchend', (e: any) => {
 			if(gh <= gBh) return;
       let y = e.changedTouches[0].clientY - gY;
       gtop = gtop + y;
-			console.log(gBh - gtop - gh, gBh, gh)
 			if(gtop >= 0){
         gtop = 0;
       } else if ((gBh - gtop - gh) > 0 ){
@@ -158,14 +154,15 @@ class Satisfy extends React.Component< ModelSatisfy & { dispatch: any}> {
 			this.setState({
 				top: gtop + 'px',
 			})
-			console.log('goalbox'+gtop);
     });
 		/*
 		展示表： 左右上下移动
 		*/
 		// 移动元素和包裹盒子的宽
-    const gTw: any = goalTimeShowBox?.offsetWidth; //真实宽度
-		const gTh: any = goalTimeShowBox?.offsetHeight;
+    // const gTw: any = goalTimeShowBox?.offsetWidth; //真实宽度
+		// const gTh: any = goalTimeShowBox?.offsetHeight;
+		const gTw: any = w;
+		const gTh: any = h;
 		const gTBw: any = gTBox?.clientWidth; //可见宽度
 		const gTBh: any = gTBox?.clientHeight;
 		// 获取手指第一次的坐标
@@ -241,44 +238,87 @@ class Satisfy extends React.Component< ModelSatisfy & { dispatch: any}> {
     });
   }
 
-	setTimeType = (type: number ) => {
-		if(type === 0) {
-			type = this.state.timeType;
-			type++;
-		}
-		if(type === 4) {
-			type = 1;
-		}
-		let str = '';
-		switch(type) {
-			case 1:
-				str = new Date().getFullYear() + ' · 日';
-				this.getTimeArray(1);
-				this.goalTimeShow(1);
-				break;
-			case 2:
-				str = new Date().getFullYear() + ' · 周';
-				this.getTimeArray(2);
-				this.goalTimeShow(2);
-				break;
-			case 3: 
-			str = new Date().getFullYear() + ' · 月';
-			this.getTimeArray(3);
-				this.goalTimeShow(3);
-			 break;
-		}
+	componentWillReceiveProps = (nextProps: any) => {
 		this.setState({
-			timeType: type,
-			timeStr: str,
+			timeArray: nextProps.timeArray,
 		})
-		let nowTime = new Date().getTime(); //获取到今天的时间，默认展示30天
+		// 初始化横向时间表
+		this.setTimeType('init');
+		this.goalTimeShow(0);
+  };
+
+
+	setTimeType = (type: string ) => {
+		let index = this.state.timeIndex;
+		if(type === 'cut') {
+			index++;
+		}
+		if(index === 3) {
+			index = 0;
+		}
+		let width = 0;
+		let height = 40 * this.props.goaldata.length ;
+		switch(index) {
+			case 0: width = 50 * 30; break;
+			case 1: width = 50 * 24; break;
+			case 2: width = 50 * 12; break;
+		}
+		this.goalTimeShow(index);
+		
+		this.setState({
+			timeIndex: index,
+			goalTimeShowWidth: width,
+			goalTimeShowHeight: height,
+		})
+		this.addTouch(width, height);
 	}
 
-	getTimeArray = (type: number) => {
-		// day: 30 week: 24 month: 30
+	goalTimeShow = (index: number) => {
+		let taskSatisfy: Array<boolean> = [];
+		let taskSatisfyIndex = 0;
+		let timeInterval = this.state.timeArray[index];
+		for(let i = 0; i < timeInterval.length * this.props.goaldata.length ; i++) {
+			taskSatisfy.push(false);
+		};
+		this.props.goaldata.forEach((goal: GoalShow) => {
+			let arr: Array<number> = [];
+			switch(index) {
+				case 0: arr = goal.dayTasks; break;
+				case 1: arr = goal.weekTasks; break;
+				case 2: arr = goal.monthTasks; break;
+			}
+			let arrIndex = 0; //arr的下标
+			if(arr.length !== 0) {
+				for(let i = 0; i < timeInterval.length; i++) {
+					if(arr[0] > timeInterval[i] || arr[arr.length - 1] < timeInterval[i]) {
+						taskSatisfyIndex++;
+						break;
+					} else {
+						console.log(arrIndex, goal.title)
+						for(let j = arrIndex; j < arr.length; j++) {
+						console.log('123',moment(arr[j]).format('YYYY-MM-DD'),  moment(timeInterval[i]).format('YYYY-MM-DD'));
+						console.log('456',arr[j],  timeInterval[i]);
+							if(arr[j] === timeInterval[i]) {
+								taskSatisfy[taskSatisfyIndex] = true;
+								arrIndex++;
+								if(arrIndex === arr.length) {
+									arrIndex = 0;
+								}
+								taskSatisfyIndex++;
+								break;
+							} 
+						}
+					}
+				}
+			}
+			taskSatisfyIndex = taskSatisfyIndex + timeInterval.length;
+		});
+		this.setState({
+			taskSatisfy,
+		})
 	}
 
-	goalTimeShow = (type: number) => {}
+	
 
 	setData = (goal: GoalShow) => {
 		console.log('setData');
@@ -294,6 +334,14 @@ class Satisfy extends React.Component< ModelSatisfy & { dispatch: any}> {
 		dataBox.style.bottom = '-50vh';
 	}
 
+	showTimeInterval = (time: number, index: number) => {
+		switch(this.state.timeIndex) {
+			case 0: return moment(time).format('MM.DD');
+			case 1: if(index === 0) {return '本周'} return '前' + index + '周';
+			case 2: return moment(time).format('YYYY.MM');
+		}
+	}
+
 
 
 	render() {
@@ -302,8 +350,8 @@ class Satisfy extends React.Component< ModelSatisfy & { dispatch: any}> {
         <div className={styles.dateBar}>
 					<div 
 						className={styles.year}
-						onClick={() => {this.setTimeType(0)}}
-					>{this.state.timeStr}</div>
+						onClick={() => {this.setTimeType('cut')}}
+					>{new Date().getFullYear() + this.state.timeStr[this.state.timeIndex]}</div>
 					<div className={styles.timeIntervalBox}>
 					<div 
 						className={styles.timeInterval} 
@@ -312,8 +360,10 @@ class Satisfy extends React.Component< ModelSatisfy & { dispatch: any}> {
 							left: this.state.left,
 						}}
 					> 
-					{this.state.timeArray.map((time: string) => {
-						return <div>{time}</div>;
+					{this.state.timeArray[this.state.timeIndex].map((time: number, index: number) => {
+						return <div>
+							{this.showTimeInterval(time, index)}
+						</div>;
 					})}
 					</div>
 					</div>
@@ -343,12 +393,12 @@ class Satisfy extends React.Component< ModelSatisfy & { dispatch: any}> {
 					style={{
 						left: this.state.left,
 						top: this.state.top,
-						width: this.state.goalTimeShowWidth
+						width: this.state.goalTimeShowWidth + 'px',
 					}}
 				>
-					{this.props.taskSatisfy.map((done: boolean) => {
+					{this.state.taskSatisfy.map((done: boolean, index: number) => {
 						return (
-							<div className={styles.goalTimeShow_box}>
+							<div key={index} className={styles.goalTimeShow_box}>
 								<div style={{
 									display: done ? 'block' : 'none'
 								}}></div>

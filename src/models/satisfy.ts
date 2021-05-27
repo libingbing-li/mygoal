@@ -8,12 +8,51 @@ export default {
     goaldata: [],
     minTime: 0,
     maxTime: 0,
-    taskSatisfy: [],
+		timeArray: [[],[],[]],
   },
   reducers: {
     changeState(state: ModelSatisfy, { payload }: any) {
       return { ...state, ...payload };
     },
+    getTimeArray(state: ModelSatisfy, { payload }: any) {
+      // day: 30 week: 24 month: 30 倒序展示
+		// 当天零点时间
+		let nowTime = new Date(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`).getTime();
+		
+		// 天
+		let dayTime = nowTime;
+		let dayArr: Array<number> = [];
+		for(let i = 1; i <= 30; i++) {
+			dayArr.push(dayTime);
+			dayTime = dayTime - 24 * 60 * 60 * 1000;
+		}
+
+		// 周
+		let week = new Date().getDay();// 0-6, 0表示周天
+    if(week === 0) {week = 7;}
+		let weekTime = nowTime - (week - 1) * 24 * 60 * 60 * 1000;
+		let weekArr: Array<number> = [];
+		for(let i = 24; i >= 1; i--) {
+			weekArr.push(weekTime);
+			weekTime = weekTime - 7 * 24 * 60 * 60 * 1000;
+		}
+
+		// 月
+		let year = new Date(nowTime).getFullYear();
+		let month = new Date(nowTime).getMonth() + 1;
+		let monthArr: Array<number> = [];
+		for(let i = 1; i <= 12; i++) {
+			monthArr.push(new Date(`${year}-${month}-1`).getTime());
+			month--;
+			if(month === 0) {
+				year = year - 1;
+				month = 12;
+			}
+		}
+
+		let arr = [dayArr, weekArr, monthArr];
+    return { ...state, 	timeArray: arr,};
+  },
   },
   effects: {
     *openDB({ payload }: any, { put, call, select }: any) {
@@ -25,6 +64,9 @@ export default {
       }
     },
     *init({ payload }: any, { put, call, select }: any) {
+      yield put({
+        type: 'getTimeArray',
+      })
       const state: ModelSatisfy = yield select((state: any) => state.satisfy);
       let dbName = 'Goals';
       let goaldata: Array<GoalShow> = [];

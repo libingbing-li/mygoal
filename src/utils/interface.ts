@@ -37,7 +37,7 @@ export interface ModelSatisfy {
   goaldata: Array<GoalShow>;
   minTime: number,
   maxTime: number,
-  taskSatisfy: Array<boolean>;
+	timeArray: Array<Array<number>>;
 }
 export interface ModelEditGoal {
   timeId: number;
