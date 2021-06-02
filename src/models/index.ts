@@ -27,7 +27,7 @@ export default {
       // 获取当天的零点时间
       let nowTime = new Date(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`).getTime();
       // 测试用，修改到第二天的零点，以便刷新测试
-      nowTime = nowTime + 24 * 60 * 60 * 1000;
+      // nowTime = nowTime + 24 * 60 * 60 * 1000;
       /*
       对已完成的任务进行归纳
       */
@@ -47,8 +47,12 @@ export default {
         let monthTime = new Date(`${new Date(tasksFinish[i].endTimeId).getFullYear()}-${new Date(tasksFinish[i].endTimeId).getMonth() + 1}-1`).getTime();
         let yearTime = new Date(`${new Date(tasksFinish[i].endTimeId).getFullYear()}-1-1`).getTime();
 
-        console.log(tasksFinish[i].tags)
-        // 对当前任务的tag进行处理
+        /* 
+        对当前任务的tag进行处理
+        同时判断当前天是周一（处理weekTasks
+        1号（处理monthTasks
+        */ 
+
         for (let j = 0; j < tasksFinish[i].tags.length; j++) {
           // 该完成任务的目标列表
           let goalArr: Array<GoalShow> = yield indexedDB.getData('Goals', 'timeId', tasksFinish[i].tags[j].timeId);
@@ -94,6 +98,26 @@ export default {
             goal.finishDescription[yearIndex].day = goal.finishDescription[yearIndex].day + (goal.dayTasks.length - 30);
           }
 
+          // 判断周一和一号,如果是，查看上周/上月是否存在数据，不存在则添加0
+          let weekOne = new Date(nowTime).getDay();
+          let monthOne = new Date(nowTime).getDate();
+          console.log(weekOne);
+          console.log(monthOne);
+          const lastDayTime = dayTime - 24 * 60 * 60 * 1000;
+          const lastWeekTime = weekTime - 7 * 24 * 60 * 60 * 1000;
+          const lastMonthTime = new Date(`${new Date(tasksFinish[i].endTimeId).getFullYear()}-${new Date(tasksFinish[i].endTimeId).getMonth()}-1`).getTime();
+
+          if(weekOne === 1 && goal.weekTasks[goal.weekTasks.length - 1] < lastWeekTime) {
+            goal.weekTasks.push(0);
+          } 
+          if(monthOne === 1 && goal.monthTasks[goal.monthTasks.length - 1] < lastMonthTime) {
+            goal.monthTasks.push(0);
+          } 
+          if(goal.dayTasks[goal.dayTasks.length - 1] < lastDayTime) {
+            goal.monthTasks.push(0);
+          } 
+
+
           // 对记录任务完成数组进行添加
           if (goal.dayTasks.length === 0 || goal.dayTasks[goal.dayTasks.length - 1] < dayTime) {
             // 当该数组不存在零点时间，或最后一个零点时间（最大的那个 小于当前任务的零点时间，就添加进去
@@ -107,8 +131,6 @@ export default {
             // 当该数组不存在零点时间，或最后一个零点时间（最大的那个 小于当前任务的零点时间，就添加进去
             goal.monthTasks.push(monthTime);
           }
-
-          console.log(goal);
 
           // 将新的goal替换原本indexedDB中的goal
           const successG: boolean = yield indexedDB.put('Goals', goal);

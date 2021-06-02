@@ -38,7 +38,8 @@ interface IState {
 	top: string;
 	left: string;
 	data: GoalShow | null; //当前选中的目标
-	taskSatisfy: Array<boolean>;
+	taskSatisfy: Array<number>;
+	goaldata: Array<GoalShow>;
 }
 
 
@@ -54,6 +55,7 @@ class Satisfy extends React.Component< ModelSatisfy & { dispatch: any}> {
 		left: '0px',
 		data: goaldata,
 		taskSatisfy: [],
+		goaldata: [],
 	}
 
 	componentDidMount = () => {
@@ -238,9 +240,10 @@ class Satisfy extends React.Component< ModelSatisfy & { dispatch: any}> {
     });
   }
 
-	componentWillReceiveProps = (nextProps: any) => {
+	componentWillReceiveProps = (nextProps: ModelSatisfy) => {
 		this.setState({
 			timeArray: nextProps.timeArray,
+			goaldata: nextProps.goaldata,
 		})
 		// 初始化横向时间表
 		this.setTimeType('init');
@@ -274,44 +277,19 @@ class Satisfy extends React.Component< ModelSatisfy & { dispatch: any}> {
 	}
 
 	goalTimeShow = (index: number) => {
-		let taskSatisfy: Array<boolean> = [];
-		let taskSatisfyIndex = 0;
+		let taskSatisfy: Array<number> = [];
 		let timeInterval = this.state.timeArray[index];
-		for(let i = 0; i < timeInterval.length * this.props.goaldata.length ; i++) {
-			taskSatisfy.push(false);
-		};
-		this.props.goaldata.forEach((goal: GoalShow) => {
+		
+		this.state.goaldata.forEach((goal: GoalShow) => {
 			let arr: Array<number> = [];
 			switch(index) {
 				case 0: arr = goal.dayTasks; break;
 				case 1: arr = goal.weekTasks; break;
 				case 2: arr = goal.monthTasks; break;
 			}
-			let arrIndex = 0; //arr的下标
-			if(arr.length !== 0) {
-				for(let i = 0; i < timeInterval.length; i++) {
-					if(arr[0] > timeInterval[i] || arr[arr.length - 1] < timeInterval[i]) {
-						taskSatisfyIndex++;
-						break;
-					} else {
-						console.log(arrIndex, goal.title)
-						for(let j = arrIndex; j < arr.length; j++) {
-						console.log('123',moment(arr[j]).format('YYYY-MM-DD'),  moment(timeInterval[i]).format('YYYY-MM-DD'));
-						console.log('456',arr[j],  timeInterval[i]);
-							if(arr[j] === timeInterval[i]) {
-								taskSatisfy[taskSatisfyIndex] = true;
-								arrIndex++;
-								if(arrIndex === arr.length) {
-									arrIndex = 0;
-								}
-								taskSatisfyIndex++;
-								break;
-							} 
-						}
-					}
-				}
+			for(let i = arr.length - 1; i <=0 ; i--) {
+				taskSatisfy.push(arr[i]);
 			}
-			taskSatisfyIndex = taskSatisfyIndex + timeInterval.length;
 		});
 		this.setState({
 			taskSatisfy,
@@ -345,6 +323,7 @@ class Satisfy extends React.Component< ModelSatisfy & { dispatch: any}> {
 
 
 	render() {
+		console.log(this.state);
 		return (
       <div className={styles.satisfy}>
         <div className={styles.dateBar}>
@@ -377,7 +356,7 @@ class Satisfy extends React.Component< ModelSatisfy & { dispatch: any}> {
 					className={styles.goals} 
 					id="goalBox"
 				>
-					{this.props.goaldata.map((goal: GoalShow) => {
+					{this.state.goaldata.map((goal: GoalShow) => {
 						return <div 
 							key={goal.timeId}
 							className={styles.goal} 
@@ -396,11 +375,11 @@ class Satisfy extends React.Component< ModelSatisfy & { dispatch: any}> {
 						width: this.state.goalTimeShowWidth + 'px',
 					}}
 				>
-					{this.state.taskSatisfy.map((done: boolean, index: number) => {
+					{this.state.taskSatisfy.map((done: number, index: number) => {
 						return (
 							<div key={index} className={styles.goalTimeShow_box}>
 								<div style={{
-									display: done ? 'block' : 'none'
+									display: done === 0 ? 'none' : 'block'
 								}}></div>
 							</div>
 						);
