@@ -8,7 +8,7 @@ export default {
     goaldata: [],
     minTime: 0,
     maxTime: 0,
-		timeArray: [[],[],[]],
+    timeArray: [[], [], []],
   },
   reducers: {
     changeState(state: ModelSatisfy, { payload }: any) {
@@ -16,57 +16,63 @@ export default {
     },
     getTimeArray(state: ModelSatisfy, { payload }: any) {
       // day: 30 week: 24 month: 30 倒序展示
-		// 当天零点时间
-		let nowTime = new Date(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`).getTime();
-		
-		// 天
-		let dayTime = nowTime;
-		let dayArr: Array<number> = [];
-		for(let i = 1; i <= 30; i++) {
-			dayArr.push(dayTime);
-			dayTime = dayTime - 24 * 60 * 60 * 1000;
-		}
+      // 当天零点时间
+      let nowTime = new Date(
+        `${new Date().getFullYear()}-${
+          new Date().getMonth() + 1
+        }-${new Date().getDate()}`,
+      ).getTime();
 
-		// 周
-		let week = new Date().getDay();// 0-6, 0表示周天
-    if(week === 0) {week = 7;}
-		let weekTime = nowTime - (week - 1) * 24 * 60 * 60 * 1000;
-		let weekArr: Array<number> = [];
-		for(let i = 24; i >= 1; i--) {
-			weekArr.push(weekTime);
-			weekTime = weekTime - 7 * 24 * 60 * 60 * 1000;
-		}
+      // 天
+      let dayTime = nowTime;
+      let dayArr: Array<number> = [];
+      for (let i = 1; i <= 30; i++) {
+        dayArr.push(dayTime);
+        dayTime = dayTime - 24 * 60 * 60 * 1000;
+      }
 
-		// 月
-		let year = new Date(nowTime).getFullYear();
-		let month = new Date(nowTime).getMonth() + 1;
-		let monthArr: Array<number> = [];
-		for(let i = 1; i <= 12; i++) {
-			monthArr.push(new Date(`${year}-${month}-1`).getTime());
-			month--;
-			if(month === 0) {
-				year = year - 1;
-				month = 12;
-			}
-		}
+      // 周
+      let week = new Date().getDay(); // 0-6, 0表示周天
+      if (week === 0) {
+        week = 7;
+      }
+      let weekTime = nowTime - (week - 1) * 24 * 60 * 60 * 1000;
+      let weekArr: Array<number> = [];
+      for (let i = 24; i >= 1; i--) {
+        weekArr.push(weekTime);
+        weekTime = weekTime - 7 * 24 * 60 * 60 * 1000;
+      }
 
-		let arr = [dayArr, weekArr, monthArr];
-    return { ...state, 	timeArray: arr,};
-  },
+      // 月
+      let year = new Date(nowTime).getFullYear();
+      let month = new Date(nowTime).getMonth() + 1;
+      let monthArr: Array<number> = [];
+      for (let i = 1; i <= 12; i++) {
+        monthArr.push(new Date(`${year}-${month}-1`).getTime());
+        month--;
+        if (month === 0) {
+          year = year - 1;
+          month = 12;
+        }
+      }
+
+      let arr = [dayArr, weekArr, monthArr];
+      return { ...state, timeArray: arr };
+    },
   },
   effects: {
     *openDB({ payload }: any, { put, call, select }: any) {
       const success: boolean = yield indexedDB.openDataBase();
-      if(success) {
+      if (success) {
         yield put({
-          type: 'init'
+          type: 'init',
         });
       }
     },
     *init({ payload }: any, { put, call, select }: any) {
       yield put({
         type: 'getTimeArray',
-      })
+      });
       const state: ModelSatisfy = yield select((state: any) => state.satisfy);
       let dbName = 'Goals';
       let goaldata: Array<GoalShow> = [];
@@ -75,7 +81,7 @@ export default {
       let taskSatisfy: Array<boolean> = [];
 
       goaldata = yield indexedDB.getData(dbName, 'timeId');
-      if(goaldata === null) {
+      if (goaldata === null) {
         goaldata = [];
       }
       // 获取所有目标
@@ -100,7 +106,7 @@ export default {
       //       minTime = new Date(`${new Date().getFullYear()}-${new Date().getMonth() + 1}`).getTime();
       //       maxTime = new Date(`${new Date().getFullYear()}-${new Date().getMonth() + 2}`).getTime();
       //     }
-      //   } 
+      //   }
       // } else {
       //   //选中了日期
       //   minTime = payload.minTime;
@@ -117,8 +123,26 @@ export default {
           minTime,
           maxTime,
           taskSatisfy,
-        }
+        },
       });
     },
-  }
+    *checkGoal({ payload }: any, { put, call, select }: any) {
+      const state: ModelSatisfy = yield select((state: any) => state.satisfy);
+      let goal = payload.goal;
+      if (goal.endTimeId === 0) {
+        goal.endTimeId = new Date().getTime();
+      } else {
+        goal.endTimeId = 0;
+      }
+      let dbName = 'Goals';
+      console.log(goal);
+      let success: boolean = yield indexedDB.put(dbName, goal);
+      if (success) {
+        yield put({
+          type: 'init',
+        });
+        payload.close();
+      }
+    },
+  },
 };

@@ -2,7 +2,7 @@ import { defineConfig } from 'umi';
 
 export default defineConfig({
   history: {
-    type: 'hash'
+    type: 'hash',
   },
   base: './',
   publicPath: './',
@@ -15,5 +15,6 @@ export default defineConfig({
     { path: '/editTask', component: '@/pages/edit/editTask' },
     { path: '/editGoal', component: '@/pages/edit/editGoal' },
     { path: '/alldata', component: '@/pages/setting/alldata' },
+    { path: '/goals', component: '@/pages/setting/goals' },
   ],
 });

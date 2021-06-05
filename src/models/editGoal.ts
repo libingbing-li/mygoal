@@ -42,6 +42,18 @@ export default {
         success = yield indexedDB.put(dbName, data);
       } else {
         console.log('进入添加');
+        let dayTasks = [];
+        let weekTasks = [];
+        let monthTasks = [];
+        for (let i = 0; i < 30; i++) {
+          dayTasks.push(0);
+        }
+        for (let i = 0; i < 24; i++) {
+          weekTasks.push(0);
+        }
+        for (let i = 0; i < 12; i++) {
+          monthTasks.push(0);
+        }
         // 添加
         let data: GoalShow = {
           timeId: new Date().getTime(),
@@ -49,9 +61,9 @@ export default {
           title: state.title,
           description: state.description,
           finishDescription: [],
-          dayTasks: [],
-          weekTasks: [],
-          monthTasks: [],
+          dayTasks: dayTasks,
+          weekTasks: weekTasks,
+          monthTasks: monthTasks,
         };
         success = yield indexedDB.add(dbName, data);
       }
@@ -63,7 +75,7 @@ export default {
             title: '',
             description: '',
             data: null,
-          }
+          },
         });
         payload.goBack();
         yield put({
@@ -76,7 +88,11 @@ export default {
     *getData({ payload }: any, { put, call, select }: any) {
       const state: ModelEditGoal = yield select((state: any) => state.editGoal);
       let dbName = 'Goals';
-      const dataArr: Array<GoalShow> = yield indexedDB.getData(dbName, 'timeId', Number(payload.timeId));
+      const dataArr: Array<GoalShow> = yield indexedDB.getData(
+        dbName,
+        'timeId',
+        Number(payload.timeId),
+      );
       let data = dataArr[0];
       yield put({
         type: 'changeState',
@@ -86,9 +102,9 @@ export default {
           description: data.description,
           data,
         },
-      })
+      });
     },
-    *remove({ payload }: any, {put, call, select}: any) {
+    *remove({ payload }: any, { put, call, select }: any) {
       /* 
       put: 触发action yield put({ type: 'todos/add', payload: 'Learn Dva'});
       call: 调用异步逻辑, 支持Promise const result = yield call(fetch, '/todos');
@@ -97,23 +113,29 @@ export default {
       let state: ModelEditGoal = yield select((state: any) => state.editGoal);
       // 选择库名
       let dbName = 'Goals';
-      const success: boolean = yield indexedDB.remove(dbName, Number(state.timeId));
+      const success: boolean = yield indexedDB.remove(
+        dbName,
+        Number(state.timeId),
+      );
       if (success) {
         // 删除对应任务中的tag
-      let taskdata: Array<TaskShow> = yield indexedDB.getData('Tasks', 'timeId');
-      let newTasks: Array<TaskShow> = [];
-      taskdata.forEach((task: TaskShow) => {
-        for(let i = 0; i < task.tags.length; i++){
-          if(task.tags[i].timeId === Number(state.timeId)) {
-            task.tags.splice(i, 1);
-            newTasks.push(task);
-            break;
+        let taskdata: Array<TaskShow> = yield indexedDB.getData(
+          'Tasks',
+          'timeId',
+        );
+        let newTasks: Array<TaskShow> = [];
+        taskdata.forEach((task: TaskShow) => {
+          for (let i = 0; i < task.tags.length; i++) {
+            if (task.tags[i].timeId === Number(state.timeId)) {
+              task.tags.splice(i, 1);
+              newTasks.push(task);
+              break;
+            }
           }
+        });
+        for (let i = 0; i < newTasks.length; i++) {
+          let success: boolean = yield indexedDB.put('Tasks', newTasks[i]);
         }
-      })
-      for(let i = 0; i < newTasks.length;  i++){
-        let success: boolean = yield indexedDB.put('Tasks', newTasks[i])
-      }
         yield put({
           type: 'changeState',
           payload: {
@@ -121,7 +143,7 @@ export default {
             title: '',
             description: '',
             data: null,
-          }
+          },
         });
         payload.goBack();
         yield put({
@@ -131,5 +153,5 @@ export default {
         app.info('删除失败');
       }
     },
-  }
+  },
 };
