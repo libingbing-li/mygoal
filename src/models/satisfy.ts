@@ -84,6 +84,19 @@ export default {
       if (goaldata === null) {
         goaldata = [];
       }
+      let arr: Array<GoalShow> = [];
+      // 获取当天的零点时间, 以处理昨天的完成任务
+      let nowTime = new Date(
+        `${new Date().getFullYear()}-${
+          new Date().getMonth() + 1
+        }-${new Date().getDate()}`,
+      ).getTime();
+      goaldata.forEach((goal: GoalShow) => {
+        if (goal.endTimeId > nowTime || goal.endTimeId === 0) {
+          arr.push(goal);
+        }
+      });
+      goaldata = arr;
       // 获取所有目标
       // goaldata = yield indexedDB.getData(dbName, 'timeId', undefined, minTime, maxTime);
       // if(goaldata === null) {

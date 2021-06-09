@@ -58,7 +58,22 @@ class dataBox extends React.Component<
         </div>
         <div className={style.description}>{this.props.data.description}</div>
         <div className={style.finish}>
-          {this.props.data.finishDescription}111111111
+          {this.props.data.description.length === 0
+            ? '该目标无记录'
+            : this.props.data.finishDescription.map(
+                (data: {
+                  year: number;
+                  month: number;
+                  week: number;
+                  day: number;
+                }) => {
+                  return (
+                    <div>{`${new Date(data.year).getFullYear()}年：完成任务${
+                      data.day
+                    }天，${data.week}周，${data.month}月`}</div>
+                  );
+                },
+              )}
         </div>
       </div>
     );

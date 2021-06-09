@@ -255,7 +255,6 @@ class Satisfy extends React.Component<ModelSatisfy & { dispatch: any }> {
     });
     // 初始化横向时间表
     this.setTimeType('init');
-    console.log(nextProps.goaldata);
     this.goalTimeShow(
       0,
       nextProps.timeArray[this.state.timeIndex],
@@ -334,8 +333,6 @@ class Satisfy extends React.Component<ModelSatisfy & { dispatch: any }> {
           }
         }
       }
-
-      console.log(timeInterval, arr, taskSatisfy);
     });
     this.setState({
       taskSatisfy,

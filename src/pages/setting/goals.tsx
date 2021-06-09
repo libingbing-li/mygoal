@@ -9,22 +9,30 @@ import {
 } from '@ant-design/icons';
 import { GoalShow, ModelSetting } from '../../utils/interface';
 import indexedDB from '../../utils/indexedDB';
-import DateSelect from '../../common-components/DateSelect';
 import commonStyle from '@/common-styles/common.less';
 import style from './styles/goals.less';
 import app from '@/utils/app';
 
-interface IState {}
+interface IState {
+  data: Array<GoalShow>;
+}
 // 展示日记，可以点击进入详情
 class Goals extends React.Component<ModelSetting & { dispatch: any }> {
-  state: IState = {};
-
-  componentDidMount = () => {
-    //
+  state: IState = {
+    data: this.props.goalFinish,
   };
 
-  getTime = (year: number, month: number, date: number) => {
-    console.log(year, month, date);
+  componentDidMount = () => {
+    this.props.dispatch({
+      type: 'setting/getFinishGoals',
+    });
+  };
+
+  componentWillReceiveProps = (nextProps: ModelSetting) => {
+    this.setState({
+      data: nextProps.goalFinish,
+    });
+    console.log(nextProps);
   };
 
   // 后退清空数据
@@ -50,8 +58,27 @@ class Goals extends React.Component<ModelSetting & { dispatch: any }> {
             {moment(data.timeId).format('YYYY-MM-DD')}
           </div>
         </div>
-        <div className={style.description}>{data.description}</div>
-        <div className={style.finish}>{data.finishDescription}111111111</div>
+        <div className={style.description}>
+          {data.description === '' ? '该目标无描述' : data.description}
+        </div>
+        <div className={style.finish}>
+          {data.description.length === 0
+            ? '该目标无记录'
+            : data.finishDescription.map(
+                (data: {
+                  year: number;
+                  month: number;
+                  week: number;
+                  day: number;
+                }) => {
+                  return (
+                    <div>{`${new Date(data.year).getFullYear()}年：完成任务${
+                      data.day
+                    }天，${data.week}周，${data.month}月`}</div>
+                  );
+                },
+              )}
+        </div>
       </div>
     );
   };
@@ -64,16 +91,11 @@ class Goals extends React.Component<ModelSetting & { dispatch: any }> {
           <div>完成目标</div>
           <CarryOutOutlined />
         </div>
-        <DateSelect
-          id="goals"
-          type={1}
-          style={{
-            margin: '10px 5vw',
-          }}
-          returnTime={(year: number, month: number, date: number) =>
-            this.getTime(year, month, date)
-          }
-        ></DateSelect>
+        <div className={style.body}>
+          {this.state.data.map((goal: GoalShow) => {
+            return this.renderDataBox(goal);
+          })}
+        </div>
       </div>
     );
   }
