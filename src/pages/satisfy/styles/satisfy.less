@@ -3,7 +3,7 @@
   flex-direction: column;
   position: relative;
   width: 100vw;
-  height: 100%;
+  height: 100vh;
   overflow: hidden;
 
   .dateBar {
@@ -11,6 +11,7 @@
     display: flex;
     width: 100vw;
     border-bottom: solid;
+    border-left: solid;
 
     .timeIntervalSet {
       flex: 0 0 40px;
@@ -34,7 +35,7 @@
           box-sizing: border-box;
           flex: 0 0 50px;
           text-align: center;
-          font-size: 10px;
+          font-size: 13px;
           border-left: solid 1px #eee;
           line-height: 30px;
         }
@@ -54,6 +55,7 @@
   .body {
     flex: 1 1 auto;
     display: flex;
+    border-left: solid;
     .goalBox {
       position: relative;
       box-sizing: border-box;
@@ -73,11 +75,10 @@
           text-align: center;
           border-bottom: solid 1px #eee;
           overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
+          white-space: nowrap;
+          text-overflow: ellipsis;
         }
       }
-      
     }
     .goalTimeShowBox {
       position: relative;
@@ -108,6 +109,5 @@
         }
       }
     }
-    
   }
 }
