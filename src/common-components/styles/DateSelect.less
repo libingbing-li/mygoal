@@ -1,0 +1,58 @@
+.dateselect {
+  box-sizing: border-box;
+  overflow: hidden;
+  transition: height 1s;
+  div {
+    box-sizing: border-box;
+  }
+  .show {
+    padding: 0 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 600;
+    width: 100%;
+    height: 30px;
+    border: solid 4px #000;
+    border-radius: 10px;
+    background: #fff;
+  }
+  .select {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 250px;
+    margin-top: 15px;
+    border: solid 4px #000;
+    border-radius: 10px;
+    padding: 10px;
+    .selectTitle {
+      flex: 0 0 auto;
+      padding: 0 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 30px;
+      text-align: center;
+      border-radius: 10px;
+      background: #eee;
+    }
+    .selectBody {
+      flex: 1 1 auto;
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-template-rows: repeat(6, 1fr);
+      align-items: center;
+      div {
+        height: 20px;
+        line-height: 20px;
+        text-align: center;
+        border-radius: 5px;
+        background: #eee;
+        margin: 0 5px;
+      }
+    }
+  }
+}

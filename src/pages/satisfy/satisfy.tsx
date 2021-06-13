@@ -255,11 +255,19 @@ class Satisfy extends React.Component<ModelSatisfy & { dispatch: any }> {
     });
     // 初始化横向时间表
     this.setTimeType('init');
-    this.goalTimeShow(0);
+    console.log(nextProps.goaldata);
+    this.goalTimeShow(
+      0,
+      nextProps.timeArray[this.state.timeIndex],
+      nextProps.goaldata,
+    );
   };
 
   setTimeType = (type: string) => {
     let index = this.state.timeIndex;
+    if (type === 'init') {
+      index = 0;
+    }
     if (type === 'cut') {
       index++;
     }
@@ -279,7 +287,9 @@ class Satisfy extends React.Component<ModelSatisfy & { dispatch: any }> {
         width = 50 * 12;
         break;
     }
-    this.goalTimeShow(index);
+    if (type !== 'init') {
+      this.goalTimeShow(index, this.state.timeArray[index]);
+    }
 
     this.setState({
       timeIndex: index,
@@ -289,9 +299,14 @@ class Satisfy extends React.Component<ModelSatisfy & { dispatch: any }> {
     this.addTouch(width, height);
   };
 
-  goalTimeShow = (index: number) => {
+  goalTimeShow = (
+    index: number,
+    timeInterval: Array<number>,
+    goaldata?: Array<GoalShow>,
+  ) => {
     let taskSatisfy: Array<number> = [];
-    this.state.goaldata.forEach((goal: GoalShow) => {
+    goaldata = goaldata === undefined ? this.state.goaldata : goaldata;
+    goaldata.forEach((goal: GoalShow) => {
       let arr: Array<number> = [];
       switch (index) {
         case 0:
@@ -304,13 +319,28 @@ class Satisfy extends React.Component<ModelSatisfy & { dispatch: any }> {
           arr = goal.monthTasks;
           break;
       }
-      for (let i = arr.length - 1; i >= 0; i--) {
-        taskSatisfy.push(arr[i]);
+      if (arr.length === 0) {
+        for (let i = 0; i < timeInterval.length; i++) {
+          taskSatisfy.push(0);
+        }
+      } else {
+        let arrIndex = arr.length - 1;
+        for (let i = 0; i < timeInterval.length; i++) {
+          if (arr[arrIndex] === timeInterval[i]) {
+            taskSatisfy.push(arr[arrIndex]);
+            arrIndex--;
+          } else {
+            taskSatisfy.push(0);
+          }
+        }
       }
+
+      console.log(timeInterval, arr, taskSatisfy);
     });
     this.setState({
       taskSatisfy,
     });
+    // console.log(taskSatisfy)
   };
 
   setData = (goal: GoalShow) => {
@@ -374,7 +404,9 @@ class Satisfy extends React.Component<ModelSatisfy & { dispatch: any }> {
             >
               {this.state.timeArray[this.state.timeIndex].map(
                 (time: number, index: number) => {
-                  return <div>{this.showTimeInterval(time, index)}</div>;
+                  return (
+                    <div key={index}>{this.showTimeInterval(time, index)}</div>
+                  );
                 },
               )}
             </div>

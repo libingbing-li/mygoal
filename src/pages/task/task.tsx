@@ -33,7 +33,7 @@ class Task extends React.Component<ModelTask & { dispatch: any }> {
 
   showTask = (item: TaskShow) => {
     const getIntervalStr = (interval: { type: number; num: Array<number> }) => {
-      console.log(interval);
+      // console.log(interval);
       let str = '';
       switch (interval.type) {
         case 1:

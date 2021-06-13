@@ -42,18 +42,18 @@ export default {
         success = yield indexedDB.put(dbName, data);
       } else {
         console.log('进入添加');
-        let dayTasks = [];
-        let weekTasks = [];
-        let monthTasks = [];
-        for (let i = 0; i < 30; i++) {
-          dayTasks.push(0);
-        }
-        for (let i = 0; i < 24; i++) {
-          weekTasks.push(0);
-        }
-        for (let i = 0; i < 12; i++) {
-          monthTasks.push(0);
-        }
+        let dayTasks: Array<number> = [];
+        let weekTasks: Array<number> = [];
+        let monthTasks: Array<number> = [];
+        // for (let i = 0; i < 30; i++) {
+        //   dayTasks.push(0);
+        // }
+        // for (let i = 0; i < 24; i++) {
+        //   weekTasks.push(0);
+        // }
+        // for (let i = 0; i < 12; i++) {
+        //   monthTasks.push(0);
+        // }
         // 添加
         let data: GoalShow = {
           timeId: new Date().getTime(),

@@ -24,7 +24,7 @@ export default {
       ).getTime();
 
       // 天
-      let dayTime = nowTime;
+      let dayTime = nowTime - 24 * 60 * 60 * 1000;
       let dayArr: Array<number> = [];
       for (let i = 1; i <= 30; i++) {
         dayArr.push(dayTime);

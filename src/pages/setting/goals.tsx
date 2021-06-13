@@ -2,9 +2,14 @@ import React from 'react';
 import { history } from 'umi';
 import moment from 'moment';
 import { connect, EffectsCommandMap, Model } from 'dva';
-import { LeftOutlined, VerticalAlignMiddleOutlined } from '@ant-design/icons';
+import {
+  LeftOutlined,
+  VerticalAlignMiddleOutlined,
+  CarryOutOutlined,
+} from '@ant-design/icons';
 import { GoalShow, ModelSetting } from '../../utils/interface';
 import indexedDB from '../../utils/indexedDB';
+import DateSelect from '../../common-components/DateSelect';
 import commonStyle from '@/common-styles/common.less';
 import style from './styles/goals.less';
 import app from '@/utils/app';
@@ -16,6 +21,10 @@ class Goals extends React.Component<ModelSetting & { dispatch: any }> {
 
   componentDidMount = () => {
     //
+  };
+
+  getTime = (year: number, month: number, date: number) => {
+    console.log(year, month, date);
   };
 
   // 后退清空数据
@@ -48,7 +57,25 @@ class Goals extends React.Component<ModelSetting & { dispatch: any }> {
   };
 
   render() {
-    return <div className={style.goals}></div>;
+    return (
+      <div className={style.goals}>
+        <div className={style.title}>
+          <LeftOutlined onClick={this.back} />
+          <div>完成目标</div>
+          <CarryOutOutlined />
+        </div>
+        <DateSelect
+          id="goals"
+          type={1}
+          style={{
+            margin: '10px 5vw',
+          }}
+          returnTime={(year: number, month: number, date: number) =>
+            this.getTime(year, month, date)
+          }
+        ></DateSelect>
+      </div>
+    );
   }
 }
 
