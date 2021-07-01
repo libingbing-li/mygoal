@@ -4,16 +4,21 @@ import moment from 'moment';
 import { connect, EffectsCommandMap, Model } from 'dva';
 import { LeftOutlined, VerticalAlignMiddleOutlined } from '@ant-design/icons';
 import DateSelect from '../../common-components/DateSelect';
+import Confirm from '@/common-components/Confirm';
 import { ModelSetting } from '../../utils/interface';
 import indexedDB from '../../utils/indexedDB';
 import commonStyle from '@/common-styles/common.less';
 import styles from './styles/alldata.less';
 import app from '@/utils/app';
 
-interface IState {}
+interface IState {
+  importShow: boolean;
+}
 // 展示日记，可以点击进入详情
 class AllData extends React.Component<ModelSetting & { dispatch: any }> {
-  state: IState = {};
+  state: IState = {
+    importShow: false,
+  };
 
   componentDidMount = () => {
     //
@@ -43,6 +48,13 @@ class AllData extends React.Component<ModelSetting & { dispatch: any }> {
     this.props.dispatch({
       type: 'setting/importJson',
     });
+    this.importShow();
+  };
+
+  importShow = () => {
+    this.setState((preState: IState) => ({
+      importShow: !preState.importShow,
+    }));
   };
 
   getTime = (year: number, month: number, date: number) => {
@@ -68,6 +80,15 @@ class AllData extends React.Component<ModelSetting & { dispatch: any }> {
   render() {
     return (
       <div className={styles.alldata}>
+        <Confirm
+          id="alldataImport"
+          txt="导入操作将会删除当前选择时间段的所有内存数据，并将框内文本数据转码添加，该操作不可逆，请确认是否进行。"
+          confirm={this.import}
+          cancel={this.importShow}
+          style={{
+            display: this.state.importShow ? 'flex' : 'none',
+          }}
+        ></Confirm>
         <div className={styles.title}>
           <LeftOutlined onClick={this.back} />
           <div>数据转移</div>
@@ -93,7 +114,7 @@ class AllData extends React.Component<ModelSetting & { dispatch: any }> {
         </div>
         <div className={styles.btns}>
           <div onClick={this.export}>导出</div>
-          <div onClick={this.import}>导入</div>
+          <div onClick={this.importShow}>导入</div>
         </div>
       </div>
     );

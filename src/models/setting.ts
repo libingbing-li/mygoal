@@ -96,6 +96,7 @@ export default {
       const setInput: any = document.querySelector('#alldata');
       const data = setInput?.value;
       if (data === '') {
+        app.info('框内不存在文本');
         return;
       }
       // 解码
