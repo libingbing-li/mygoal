@@ -311,9 +311,9 @@ export default {
               yield put({
                 type: 'task/init',
               });
-              // yield put({
-              //   type: 'history/init',
-              // })
+              yield put({
+                type: 'historyshow/init',
+              });
               yield put({
                 type: 'satisfy/init',
               });
