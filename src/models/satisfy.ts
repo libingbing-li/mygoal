@@ -5,6 +5,7 @@ import { ModelSatisfy, GoalShow } from '../utils/interface';
 export default {
   namespace: 'satisfy',
   state: {
+    scrollTop: 0,
     goaldata: [],
     minTime: 0,
     maxTime: 0,

@@ -1,14 +1,12 @@
 .dataBox {
   display: flex;
   flex-direction: column;
-  position: absolute;
+  position: fixed;
   left: 0;
   box-sizing: border-box;
   width: 100vw;
-  height: 50vh;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  transition: bottom .5s;
+  height: 35vh;
+  // transition: bottom .5s;
   border: solid 3px #000;
   border-bottom: none;
   border-top-left-radius: 10px;
@@ -24,11 +22,11 @@
   }
   .title {
     flex: 1 1 auto;
-    font-size: 25px;
+    font-size: 20px;
     width: 70%;
     overflow-y: hidden;
     overflow-x: scroll;
-      white-space: nowrap;
+    white-space: nowrap;
   }
   .time {
     flex: 0 0 auto;
@@ -41,11 +39,15 @@
   }
   .description {
     flex: 1 1 auto;
+
+    overflow-x: hidden;
+    overflow-y: scroll;
   }
-  .description, .finish {
+  .description,
+  .finish {
     background: #eeefff;
     border-radius: 10px;
     padding: 10px;
-    white-space: pre-line
+    white-space: pre-line;
   }
 }

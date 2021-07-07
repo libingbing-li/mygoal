@@ -34,11 +34,12 @@ interface IState {
 class Index extends React.Component<ModelIndex & { dispatch: any }> {
   state: IState = {
     pageNum: 3,
-    nowPage: 2,
+    nowPage: this.props.nowPage,
   };
 
   componentDidMount = async () => {
     moment.locale('zh-cn');
+    console.log(this.props.nowPage);
     this.props.dispatch({
       type: 'index/openDB',
     });
@@ -134,6 +135,12 @@ class Index extends React.Component<ModelIndex & { dispatch: any }> {
           type: 'satisfy/init',
         });
       }
+      this.props.dispatch({
+        type: 'index/changeState',
+        payload: {
+          nowPage: state.nowPage - 1,
+        },
+      });
       return {
         nowPage: state.nowPage - 1,
       };
@@ -167,6 +174,12 @@ class Index extends React.Component<ModelIndex & { dispatch: any }> {
           type: 'satisfy/init',
         });
       }
+      this.props.dispatch({
+        type: 'index/changeState',
+        payload: {
+          nowPage: state.nowPage + 1,
+        },
+      });
       return {
         nowPage: state.nowPage + 1,
       };

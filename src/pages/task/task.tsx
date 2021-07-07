@@ -20,6 +20,18 @@ class Task extends React.Component<ModelTask & { dispatch: any }> {
     this.props.dispatch({
       type: 'task/openDB',
     });
+    const scrollBox = document.querySelector('#task');
+    scrollBox?.addEventListener('scroll', (e: any) => {
+      this.props.dispatch({
+        type: 'task/changeState',
+        payload: {
+          scrollTop: scrollBox.scrollTop,
+        },
+      });
+    });
+    if (scrollBox) {
+      scrollBox.scrollTop = this.props.scrollTop;
+    }
   };
 
   taskfinish = (task: TaskShow) => {
@@ -90,7 +102,7 @@ class Task extends React.Component<ModelTask & { dispatch: any }> {
 
   render() {
     return (
-      <div className={styles.task}>
+      <div className={styles.task} id="task">
         {this.props.taskdata.length === 0 ? (
           <div className={styles.nothing}>没有未完成任务~</div>
         ) : (

@@ -22,6 +22,18 @@ class HistoryShowList extends React.Component<
     this.props.dispatch({
       type: 'historyshow/openDB',
     });
+    const scrollBox = document.querySelector('#historyshow');
+    scrollBox?.addEventListener('scroll', (e: any) => {
+      this.props.dispatch({
+        type: 'historyshow/changeState',
+        payload: {
+          scrollTop: scrollBox.scrollTop,
+        },
+      });
+    });
+    if (scrollBox) {
+      scrollBox.scrollTop = this.props.scrollTop;
+    }
   };
 
   showHistory = (item: HistoryShow) => {
@@ -63,7 +75,7 @@ class HistoryShowList extends React.Component<
 
   render() {
     return (
-      <div className={styles.historyshow}>
+      <div className={styles.historyshow} id="historyshow">
         {/* <DatePicker 
 					onChange={this.onChange} 
 					picker="month"  

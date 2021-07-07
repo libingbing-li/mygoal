@@ -10,7 +10,9 @@ import indexedDB from '../utils/indexedDB';
 
 export default {
   namespace: 'index',
-  state: {},
+  state: {
+    nowPage: 2,
+  },
   reducers: {
     changeState(state: ModelIndex, { payload }: any) {
       return { ...state, ...payload };

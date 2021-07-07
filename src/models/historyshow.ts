@@ -2,10 +2,10 @@ import app from '../utils/app';
 import indexedDB from '../utils/indexedDB';
 import { ModelHistoryShow, HistoryShow } from '../utils/interface';
 
-
 export default {
   namespace: 'historyshow',
   state: {
+    scrollTop: 0,
     historydata: [],
   },
   reducers: {
@@ -16,21 +16,23 @@ export default {
   effects: {
     *openDB({ payload }: any, { put, call, select }: any) {
       const success: boolean = yield indexedDB.openDataBase();
-      if(success) {
+      if (success) {
         yield put({
-          type: 'init'
+          type: 'init',
         });
       }
     },
     *init({ payload }: any, { put, call, select }: any) {
-      const state: ModelHistoryShow = yield select((state: any) => state.historyshow);
+      const state: ModelHistoryShow = yield select(
+        (state: any) => state.historyshow,
+      );
       let dbName = 'Histories';
       let historydata: Array<HistoryShow> = yield indexedDB.getData(dbName);
       yield put({
         type: 'changeState',
         payload: {
           historydata: historydata ? historydata : [],
-        }
+        },
       });
       /*
       直接进入：显示当月日记
@@ -49,7 +51,7 @@ export default {
       //       minTime = new Date(`${new Date().getFullYear()}-${new Date().getMonth() + 1}`).getTime();
       //       maxTime = new Date(`${new Date().getFullYear()}-${new Date().getMonth() + 2}`).getTime();
       //     }
-      //   } 
+      //   }
       // } else {
       //   //选中了日期
       //   minTime = payload.minTime;
@@ -69,7 +71,7 @@ export default {
       // });
     },
     // *saveNote({ payload }: any, { put, call, select }: any) {
-    //   /* 
+    //   /*
     //   put: 触发action yield put({ type: 'todos/add', payload: 'Learn Dva'});
     //   call: 调用异步逻辑, 支持Promise const result = yield call(fetch, '/todos');
     //   select: 从state中获取数据,属性名是命名空间的名字 const todos = yield select(state => state.todos);
@@ -105,5 +107,5 @@ export default {
     //     app.info('日记保存失败');
     //   }
     // },
-  }
+  },
 };

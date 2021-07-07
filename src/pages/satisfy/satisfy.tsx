@@ -57,6 +57,18 @@ class Satisfy extends React.Component<ModelSatisfy & { dispatch: any }> {
     this.props.dispatch({
       type: 'satisfy/init',
     });
+    const scrollBox = document.querySelector('#satisfy');
+    scrollBox?.addEventListener('scroll', (e: any) => {
+      this.props.dispatch({
+        type: 'satisfy/changeState',
+        payload: {
+          scrollTop: scrollBox.scrollTop,
+        },
+      });
+    });
+    if (scrollBox) {
+      scrollBox.scrollTop = this.props.scrollTop;
+    }
   };
 
   addTouch = (w: number, h: number) => {
@@ -68,8 +80,8 @@ class Satisfy extends React.Component<ModelSatisfy & { dispatch: any }> {
     const goalTimeShowBox: any = document.querySelector(`#goalTimeShowBox`);
     const gTBox: any = goalTimeShowBox?.parentElement;
     /*
-		时间轴： 左右移动时间轴，可以更改时间轴的left，同时也将显示表的left更改
-		*/
+    时间轴： 左右移动时间轴，可以更改时间轴的left，同时也将显示表的left更改
+    */
     // 移动元素和包裹盒子的宽
     // const tw: any = timeInterval?.scrollWidth; //真实宽度 当一次性获取的数据超出可视页面后，有时候会得到正确数据，有时候会得到0
     const tw: any = w;
@@ -113,12 +125,12 @@ class Satisfy extends React.Component<ModelSatisfy & { dispatch: any }> {
       });
     });
     /*
-		目标轴： 上下移动时间轴，可以更改目标轴的top，同时也将显示表的top更改
-		*/
+    目标轴： 上下移动时间轴，可以更改目标轴的top，同时也将显示表的top更改
+    */
     // 移动元素和包裹盒子的宽
     // const gh: any = goalBox?.offsetHeight; //真实高度  理由同tw
     const gh: any = h;
-    const gBh: any = gBox?.clientHeight; //可见高度
+    let gBh: any = gBox?.clientHeight; //可见高度
     // 获取手指第一次的坐标
     let gY = 0;
     goalBox?.addEventListener('touchstart', (e: any) => {
@@ -129,6 +141,8 @@ class Satisfy extends React.Component<ModelSatisfy & { dispatch: any }> {
       goalBox.style.top.substring(0, goalBox.style.top.length - 2),
     );
     goalBox?.addEventListener('touchmove', (e: any) => {
+      gBh = gBox?.clientHeight; //在弹窗出现后可以滚动
+      // console.log(gBh)
       if (gh <= gBh) return;
       // 记录移动的距离
       let y = e.changedTouches[0].clientY - gY;
@@ -157,8 +171,8 @@ class Satisfy extends React.Component<ModelSatisfy & { dispatch: any }> {
       });
     });
     /*
-		展示表： 左右上下移动
-		*/
+    展示表： 左右上下移动
+    */
     // 移动元素和包裹盒子的宽
     // const gTw: any = goalTimeShowBox?.offsetWidth; //真实宽度
     // const gTh: any = goalTimeShowBox?.offsetHeight;
@@ -340,18 +354,34 @@ class Satisfy extends React.Component<ModelSatisfy & { dispatch: any }> {
     // console.log(taskSatisfy)
   };
 
-  setData = (goal: GoalShow) => {
-    console.log('setData');
+  setData = (goal: GoalShow, index: number) => {
+    console.log('setData', index);
     this.setState({
       data: goal,
     });
     const dataBox: any = document.querySelector('#dataBox');
-    dataBox.style.bottom = '0px';
+    dataBox.style.bottom = '60px';
+
+    // 对主页面做调整
+    const gBox: any = document.querySelector(`#goalBox`)?.parentElement;
+    gBox.style.height = 'calc(65vh - 140px)';
+    if (40 * (index + 1) > gBox?.clientHeight) {
+      this.setState({
+        top: gBox?.clientHeight - 40 * (index + 1),
+      });
+    }
   };
 
   dataBoxClose = () => {
     const dataBox: any = document.querySelector('#dataBox');
-    dataBox.style.bottom = '-50vh';
+    dataBox.style.bottom = '-35vh';
+
+    // 对主页面做调整
+    const gBox: any = document.querySelector(`#goalBox`)?.parentElement;
+    gBox.style.height = 'auto';
+    this.setState({
+      top: 0,
+    });
   };
 
   showTimeInterval = (time: number, index: number) => {
@@ -380,7 +410,7 @@ class Satisfy extends React.Component<ModelSatisfy & { dispatch: any }> {
 
   render() {
     return (
-      <div className={styles.satisfy}>
+      <div className={styles.satisfy} id="satisfy">
         <div className={styles.dateBar}>
           <div
             className={styles.year}
@@ -418,12 +448,12 @@ class Satisfy extends React.Component<ModelSatisfy & { dispatch: any }> {
               className={styles.goals}
               id="goalBox"
             >
-              {this.state.goaldata.map((goal: GoalShow) => {
+              {this.state.goaldata.map((goal: GoalShow, index: number) => {
                 return (
                   <div
                     key={goal.timeId}
                     className={styles.goal}
-                    onClick={() => this.setData(goal)}
+                    onClick={() => this.setData(goal, index)}
                     style={{
                       color: goal.endTimeId === 0 ? '#000' : '#ddd',
                     }}

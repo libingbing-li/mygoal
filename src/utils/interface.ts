@@ -30,12 +30,15 @@ export interface HistoryShow {
 }
 
 // model
-export interface ModelIndex {}
+export interface ModelIndex {
+  nowPage: number;
+}
 export interface ModelSatisfy {
   goaldata: Array<GoalShow>;
   minTime: number;
   maxTime: number;
   timeArray: Array<Array<number>>;
+  scrollTop: number;
 }
 export interface ModelEditGoal {
   timeId: number;
@@ -53,9 +56,11 @@ export interface ModelEditTask {
 
 export interface ModelHistoryShow {
   historydata: Array<HistoryShow>;
+  scrollTop: number;
 }
 export interface ModelTask {
   taskdata: Array<TaskShow>;
+  scrollTop: number;
 }
 export interface ModelSetting {
   dataTxt: string;
