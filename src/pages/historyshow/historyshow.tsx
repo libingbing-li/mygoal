@@ -2,26 +2,30 @@ import React from 'react';
 import { History, history } from 'umi';
 import moment from 'moment';
 import { connect, EffectsCommandMap, Model } from 'dva';
-import { DatePicker } from 'antd';
 import { CheckOutlined } from '@ant-design/icons';
 import { HistoryShow, ModelHistoryShow } from '../../utils/interface';
 import indexedDB from '../../utils/indexedDB';
 import commonStyle from '@/common-styles/common.less';
+import DateSelect from '@/common-components/DateSelect';
 import styles from './styles/historyshow.less';
 import app from '@/utils/app';
 import './styles/antd.css';
 
-interface IState {}
+interface IState {
+  historydata: Array<HistoryShow>;
+}
 // 展示日记，可以点击进入详情
 class HistoryShowList extends React.Component<
   ModelHistoryShow & { dispatch: any }
 > {
-  state: IState = {};
+  state: IState = {
+    historydata: this.props.historydata,
+  };
 
   componentDidMount = () => {
-    this.props.dispatch({
-      type: 'historyshow/openDB',
-    });
+    // this.props.dispatch({
+    //   type: 'historyshow/init',
+    // });
     const scrollBox = document.querySelector('#historyshow');
     scrollBox?.addEventListener('scroll', (e: any) => {
       this.props.dispatch({
@@ -34,6 +38,12 @@ class HistoryShowList extends React.Component<
     if (scrollBox) {
       scrollBox.scrollTop = this.props.scrollTop;
     }
+  };
+
+  componentWillReceiveProps = (nextProps: ModelHistoryShow) => {
+    this.setState({
+      historydata: nextProps.historydata,
+    });
   };
 
   showHistory = (item: HistoryShow) => {
@@ -73,20 +83,47 @@ class HistoryShowList extends React.Component<
     });
   };
 
+  getTime = (year: number, month: number, date: number) => {
+    let yearMax = 0;
+    let monthMax = 0;
+    if (month + 1 === 13) {
+      yearMax = year + 1;
+      monthMax = 1;
+    } else {
+      yearMax = year;
+      monthMax = month + 1;
+    }
+    this.props.dispatch({
+      type: 'historyshow/init',
+      payload: {
+        minTime: new Date(`${year}-${month}-1`).getTime(),
+        maxTime: new Date(`${yearMax}-${monthMax}-1`).getTime() - 1,
+      },
+    });
+  };
+
   render() {
     return (
       <div className={styles.historyshow} id="historyshow">
-        {/* <DatePicker 
-					onChange={this.onChange} 
-					picker="month"  
-					value={this.props.minTime === 0 ? moment() : moment(this.props.minTime)}
-				/> */}
-        {this.props.historydata.length === 0 ? (
+        <DateSelect
+          id="goals"
+          type={1}
+          time={this.props.minTime}
+          style={{
+            width: '80vw',
+            margin: '10px 10vw',
+            flex: '0 0 30px',
+          }}
+          returnTime={(year: number, month: number, date: number) =>
+            this.getTime(year, month, date)
+          }
+        ></DateSelect>
+        {this.state.historydata.length === 0 ? (
           <div className={styles.nothing}>
             当前还没有任务记录，去看看任务吧~
           </div>
         ) : (
-          this.props.historydata.map((item: HistoryShow) => {
+          this.state.historydata.map((item: HistoryShow) => {
             return this.showHistory(item);
           })
         )}

@@ -38,7 +38,7 @@ class IndexedDB {
     const _this = this;
     const promise = new Promise((resolve, reject) => {
       // 在此新建数据库并创建好所有需要的表(对象仓库)和数据结构
-      let request = window.indexedDB.open('MyTask'); //一个打开数据库的请求
+      let request = window.indexedDB.open('MyGoal'); //一个打开数据库的请求
       request.onupgradeneeded = (e: any) => {
         this.database = e.target.result;
         // 在此进行数据结构的构造-存放Note日记的表

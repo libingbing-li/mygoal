@@ -279,7 +279,7 @@ class Index extends React.Component<ModelIndex & { dispatch: any }> {
             }}
           >
             <UnorderedListOutlined onClick={this.sidebarShow} />
-            <span>MyTask</span>
+            <span>MyGoal</span>
             {/* <span onClick={this.checkTab}>
 						{this.state.nowPage === 1 ? 'MyNote' : 'Satisfy'}
 					</span> */}

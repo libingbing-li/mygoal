@@ -27,7 +27,7 @@ class Sidebar extends React.Component<
   render() {
     return (
       <div style={this.props.style} id="sidebar" className={styles.sidebar}>
-        <div className={styles.title}>MyTask</div>
+        <div className={styles.title}>MyGoal</div>
         <div className={styles.item} onClick={this.goAllData}>
           数据转移
         </div>

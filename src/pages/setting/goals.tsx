@@ -92,9 +92,11 @@ class Goals extends React.Component<ModelSetting & { dispatch: any }> {
           <CarryOutOutlined />
         </div>
         <div className={style.body}>
-          {this.state.data.map((goal: GoalShow) => {
-            return this.renderDataBox(goal);
-          })}
+          {this.state.data.length === 0
+            ? '当前不存在已完成任务'
+            : this.state.data.map((goal: GoalShow) => {
+                return this.renderDataBox(goal);
+              })}
         </div>
       </div>
     );

@@ -17,6 +17,7 @@ import { months } from 'moment';
 
 const defaultProps = {
   type: 1, //type 1月 2日期
+  time: 0,
 };
 
 // interface IProps {
@@ -70,12 +71,21 @@ class DateSelect extends React.Component<IProps & typeof defaultProps> {
     selectBR: 'repeat(3, 1fr)',
   };
   componentDidMount = () => {
-    const nowDate = new Date();
-    let year = nowDate.getFullYear();
-    let month = nowDate.getMonth() + 1;
-    let date = nowDate.getDate();
+    if (this.props.time === 0) {
+      const nowDate = new Date();
+      let year = nowDate.getFullYear();
+      let month = nowDate.getMonth() + 1;
+      let date = nowDate.getDate();
 
-    this.getStr(year, month, date);
+      this.getStr(year, month, date);
+    } else {
+      const nowDate = new Date(this.props.time);
+      let year = nowDate.getFullYear();
+      let month = nowDate.getMonth() + 1;
+      let date = nowDate.getDate();
+
+      this.getStr(year, month, date);
+    }
   };
 
   getStr = (year: number, month: number, date: number) => {

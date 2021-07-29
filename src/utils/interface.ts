@@ -56,6 +56,8 @@ export interface ModelEditTask {
 
 export interface ModelHistoryShow {
   historydata: Array<HistoryShow>;
+  minTime: number;
+  maxTime: number;
   scrollTop: number;
 }
 export interface ModelTask {

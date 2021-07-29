@@ -364,7 +364,7 @@ class Satisfy extends React.Component<ModelSatisfy & { dispatch: any }> {
 
     // 对主页面做调整
     const gBox: any = document.querySelector(`#goalBox`)?.parentElement;
-    gBox.style.height = 'calc(65vh - 140px)';
+    gBox.style.height = 'calc(50vh - 140px)';
     if (40 * (index + 1) > gBox?.clientHeight) {
       this.setState({
         top: gBox?.clientHeight - 40 * (index + 1),
@@ -374,7 +374,7 @@ class Satisfy extends React.Component<ModelSatisfy & { dispatch: any }> {
 
   dataBoxClose = () => {
     const dataBox: any = document.querySelector('#dataBox');
-    dataBox.style.bottom = '-35vh';
+    dataBox.style.bottom = '-50vh';
 
     // 对主页面做调整
     const gBox: any = document.querySelector(`#goalBox`)?.parentElement;
