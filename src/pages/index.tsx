@@ -46,48 +46,13 @@ class Index extends React.Component<ModelIndex & { dispatch: any }> {
   };
 
   // 下拉行为 - 刷新
-  slideBottom = (e: any) => {
+  refresh = (e: any) => {
     // 刷新
     const refreshBox: any = document.querySelector(`#refreshBox`);
     const page: any = document.querySelector(
       `#index-page${this.state.nowPage}`,
     );
     const navbar: any = document.querySelector(`#navbar`);
-    // let scrollTopNoZero = false;
-    // switch(this.state.nowPage) {
-    // 	case 1:
-    // 	const t1: any = document.querySelector('#time-page1');
-    // 	const t2: any = document.querySelector('#time-page2');
-    // 	const t3: any = document.querySelector('#time-page3');
-    // 	console.log(t3);
-    // 	if(t1.scrollTop !== 0 ||
-    // 		t2.scrollTop !== 0 ||
-    // 		t3.scrollTop !== 0
-    // 		) {
-    // 			scrollTopNoZero = true;
-    // 		}
-    // 	break;
-    // 	case 2:
-    // 		if(page.lastElementChild.lastElementChild.scrollTop !== 0 ) {
-    // 			scrollTopNoZero = true;
-    // 		}
-    // 		break;
-    // 	case 3:
-    // 	const i1: any = document.querySelector('#info-page1');
-    // 		const i2: any = document.querySelector('#info-page2');
-    // 		const i3: any = document.querySelector('#info-page3');
-    // 		if(i1.scrollTop !== 0 ||
-    // 			i2.scrollTop !== 0 ||
-    // 			i3.scrollTop !== 0
-    // 			) {
-    // 				scrollTopNoZero = true;
-    // 			}
-    // 		break;
-    // }
-    // console.log(scrollTopNoZero);
-    // if(scrollTopNoZero) {
-    // 	return;
-    // }
     refreshBox.style.top = '0vh';
     navbar.style.marginTop = '15vh';
     if (this.state.nowPage === 3) {
@@ -279,7 +244,7 @@ class Index extends React.Component<ModelIndex & { dispatch: any }> {
             }}
           >
             <UnorderedListOutlined onClick={this.sidebarShow} />
-            <span>MyGoal</span>
+            <span onClick={this.refresh}>MyGoal</span>
             {/* <span onClick={this.checkTab}>
 						{this.state.nowPage === 1 ? 'MyNote' : 'Satisfy'}
 					</span> */}
@@ -296,7 +261,7 @@ class Index extends React.Component<ModelIndex & { dispatch: any }> {
               slideDistance={200}
               slideLeft={this.slideLeft}
               slideRight={this.slideRight}
-              slideBottom={this.slideBottom}
+              // slideBottom={this.slideBottom}
             >
               <div
                 id="index-page1"
