@@ -104,12 +104,15 @@ class Task extends React.Component<ModelTask & { dispatch: any }> {
     return (
       <div className={styles.task} id="task">
         {this.props.taskdata.length === 0 ? (
-          <div className={styles.nothing}>没有未完成任务~</div>
+          <div className={styles.nothing}>任务已经全部完成啦!</div>
         ) : (
           this.props.taskdata.map((item: TaskShow) => {
             return this.showTask(item);
           })
         )}
+        <div className={styles.tips}>
+          tip：在同一天内完成相同任务，历史记录只有一条
+        </div>
       </div>
     );
   }

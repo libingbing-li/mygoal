@@ -25,6 +25,8 @@ export default {
         yield put({
           type: 'init',
         });
+      } else {
+        app.info('未成功打开数据库，请重新进入应用');
       }
     },
     *init({ payload }: any, { put, call, select }: any) {
@@ -56,7 +58,6 @@ export default {
         1,
         nowTime,
       );
-      console.log('index', nowTime, tasksFinish);
       if (tasksFinish === null) {
         tasksFinish = [];
       }
@@ -239,7 +240,17 @@ export default {
             'timeId',
             dayTime,
           );
-          HistoriesArr[historyIndex].tasks.push(tasksFinish[i].txt); //为历史记录添加任务
+
+          let addHistoryTask = true; //是否为历史记录添加任务 - 不重复则添加
+          for (let j = 0; j < HistoriesArr[historyIndex].tasks.length; j++) {
+            if (HistoriesArr[historyIndex].tasks[j] === tasksFinish[i].txt) {
+              addHistoryTask = false;
+              break;
+            }
+          }
+          if (addHistoryTask) {
+            HistoriesArr[historyIndex].tasks.push(tasksFinish[i].txt); //为历史记录添加任务
+          }
 
           let addHistoryGoal = true; //是否为历史记录添加目标 - 不重复则添加
           for (let j = 0; j < tasksFinish[i].tags.length; j++) {
@@ -321,6 +332,8 @@ export default {
                 type: 'satisfy/init',
               });
             }
+          } else {
+            app.info('删除已完成任务失败，请刷新重试。');
           }
         } else {
           const removeTask: boolean = yield indexedDB.remove(
@@ -335,6 +348,8 @@ export default {
             yield put({
               type: 'satisfy/init',
             });
+          } else {
+            app.info('删除已完成任务失败，请刷新重试。');
           }
         }
       }
@@ -376,6 +391,10 @@ export default {
         'Tasks',
         'timeId',
       );
+
+      if (taskdata === null) {
+        taskdata = [];
+      }
       // 删除对应任务中的tag
       let newTasks: Array<TaskShow> = [];
       taskdata.forEach((task: TaskShow) => {

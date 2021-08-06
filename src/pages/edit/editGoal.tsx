@@ -124,32 +124,6 @@ class EditGoal extends React.Component<ModelEditGoal & { dispatch: any }> {
             }
             placeholder="请输入目标描述"
           ></textarea>
-          <div
-            className={styles.finish}
-            style={{
-              display:
-                history.location.query?.timeId === 'null' ? 'none' : 'block',
-            }}
-          >
-            {this.props.finishDescription.length === 0
-              ? '该目标无记录'
-              : this.props.data.finishDescription.map(
-                  (data: {
-                    year: number;
-                    month: number;
-                    week: number;
-                    day: number;
-                  }) => {
-                    return (
-                      <div key={data.year}>{`${new Date(
-                        data.year,
-                      ).getFullYear()}年：完成任务${data.day}天，${
-                        data.week
-                      }周，${data.month}月`}</div>
-                    );
-                  },
-                )}
-          </div>
         </div>
       </div>
     );

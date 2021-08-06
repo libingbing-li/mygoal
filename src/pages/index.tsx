@@ -68,8 +68,9 @@ class Index extends React.Component<ModelIndex & { dispatch: any }> {
         type: 'historyshow/init',
       });
     }
+    //
     this.props.dispatch({
-      type: 'index/init',
+      type: 'index/openDB',
     });
     setTimeout(() => {
       refreshBox.style.top = '-15vh';

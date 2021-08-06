@@ -53,7 +53,7 @@ class Goals extends React.Component<ModelSetting & { dispatch: any }> {
     return (
       <div className={style.dataBox} key={data.timeId}>
         <div className={style.titleBox}>
-          <div className={style.title}>{data.title}</div>
+          <div className={style.titleTxt}>{data.title}</div>
           <div className={style.time}>
             {moment(data.timeId).format('YYYY-MM-DD')}
             <br />
@@ -76,9 +76,9 @@ class Goals extends React.Component<ModelSetting & { dispatch: any }> {
                   return (
                     <div key={data.year}>{`${new Date(
                       data.year,
-                    ).getFullYear()}年：完成任务${data.day}天，${
-                      data.week
-                    }周，${data.month}月`}</div>
+                    ).getFullYear()}-累计在${data.day}天、${data.week}周、${
+                      data.month
+                    }月中为目标努力过！`}</div>
                   );
                 },
               )}

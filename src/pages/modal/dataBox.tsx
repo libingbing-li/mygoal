@@ -58,24 +58,33 @@ class dataBox extends React.Component<
         </div>
         <div className={style.description}>{this.props.data.description}</div>
         <div className={style.finish}>
-          {this.props.data.finishDescription.length === 0
-            ? '该目标无记录'
-            : this.props.data.finishDescription.map(
-                (data: {
-                  year: number;
-                  month: number;
-                  week: number;
-                  day: number;
-                }) => {
-                  return (
-                    <div key={data.year}>{`${new Date(
-                      data.year,
-                    ).getFullYear()}年：完成任务${data.day}天，${
-                      data.week
-                    }周，${data.month}月`}</div>
-                  );
-                },
-              )}
+          {console.log(this.props.data)}
+          {this.props.data.finishDescription.length === 0 ? (
+            <div>{`${new Date().getFullYear()}-累计在${
+              this.props.data.dayTasks.length
+            }天、${this.props.data.weekTasks.length}周、${
+              this.props.data.monthTasks.length
+            }月中为目标努力过！`}</div>
+          ) : (
+            this.props.data.finishDescription.map(
+              (data: {
+                year: number;
+                month: number;
+                week: number;
+                day: number;
+              }) => {
+                return (
+                  <div key={data.year}>{`${new Date(
+                    data.year,
+                  ).getFullYear()}-累计在${
+                    data.day + this.props.data.dayTasks.length
+                  }天、${data.week + this.props.data.weekTasks.length}周、${
+                    data.month + this.props.data.monthTasks.length
+                  }月中为目标努力过！`}</div>
+                );
+              },
+            )
+          )}
         </div>
       </div>
     );

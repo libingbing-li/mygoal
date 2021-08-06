@@ -24,6 +24,10 @@ export default {
       select: 从state中获取数据,属性名是命名空间的名字 const todos = yield select(state => state.todos);
       */
       const state: ModelEditTask = yield select((state: any) => state.editTask);
+      if (state.txt === '') {
+        app.info('请输入任务内容');
+        return;
+      }
       let dbName = 'Tasks';
       let success: boolean = false;
       if (state.timeId) {

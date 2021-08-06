@@ -308,6 +308,7 @@ class Satisfy extends React.Component<ModelSatisfy & { dispatch: any }> {
       timeIndex: index,
       goalTimeShowWidth: width,
       goalTimeShowHeight: height,
+      left: '0px',
     });
     this.addTouch(width, height);
   };
