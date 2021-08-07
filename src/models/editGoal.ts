@@ -9,6 +9,7 @@ export default {
     timeId: 0,
     title: '',
     description: '',
+    finishDescription: [],
     data: null,
   },
   reducers: {
@@ -100,6 +101,7 @@ export default {
           timeId: payload.timeId,
           title: data.title,
           description: data.description,
+          finishDescription: data.finishDescription,
           data,
         },
       });

@@ -23,9 +23,6 @@ class HistoryShowList extends React.Component<
   };
 
   componentDidMount = () => {
-    // this.props.dispatch({
-    //   type: 'historyshow/init',
-    // });
     const scrollBox = document.querySelector('#historyshow');
     scrollBox?.addEventListener('scroll', (e: any) => {
       this.props.dispatch({
@@ -93,8 +90,12 @@ class HistoryShowList extends React.Component<
       yearMax = year;
       monthMax = month + 1;
     }
+    console.log('histime', {
+      minTime: new Date(`${year}-${month}-1`).getTime(),
+      maxTime: new Date(`${yearMax}-${monthMax}-1`).getTime() - 1,
+    });
     this.props.dispatch({
-      type: 'historyshow/init',
+      type: 'historyshow/openDB',
       payload: {
         minTime: new Date(`${year}-${month}-1`).getTime(),
         maxTime: new Date(`${yearMax}-${monthMax}-1`).getTime() - 1,

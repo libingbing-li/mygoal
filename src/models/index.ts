@@ -186,7 +186,7 @@ export default {
               goal.finishDescription[yearIndex].day + 1;
           }
 
-          console.log(goal);
+          // console.log(goal);
 
           const successG: boolean = yield indexedDB.put('Goals', goal);
           console.log('index-init：刷新目标数据 - ' + successG);
@@ -430,7 +430,7 @@ export default {
           goalFinish[i].finishDescription[yearIndex].day =
             goalFinish[i].finishDescription[yearIndex].day + 1;
         });
-        // goalFinish[i].dayTasks = [];
+        goalFinish[i].dayTasks = [];
 
         goalFinish[i].weekTasks.forEach((week: number) => {
           let yearTime = new Date(
@@ -473,7 +473,7 @@ export default {
           goalFinish[i].finishDescription[yearIndex].week =
             goalFinish[i].finishDescription[yearIndex].week + 1;
         });
-        // goalFinish[i].weekTasks = [];
+        goalFinish[i].weekTasks = [];
 
         goalFinish[i].monthTasks.forEach((month: number) => {
           let yearTime = new Date(
@@ -516,7 +516,10 @@ export default {
           goalFinish[i].finishDescription[yearIndex].month =
             goalFinish[i].finishDescription[yearIndex].month + 1;
         });
-        // goalFinish[i].monthTasks = [];
+        goalFinish[i].monthTasks = [];
+
+        const successG: boolean = yield indexedDB.put('Goals', goalFinish[i]);
+        console.log('index-init：刷新目标数据 - ' + successG);
 
         // 将任务添加到history中
         let HistoriesArr: Array<HistoryShow> = yield indexedDB.getData(

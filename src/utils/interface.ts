@@ -44,6 +44,12 @@ export interface ModelEditGoal {
   timeId: number;
   title: string;
   description: string;
+  finishDescription: Array<{
+    year: number;
+    month: number;
+    week: number;
+    day: number;
+  }>;
   data: GoalShow;
 }
 export interface ModelEditTask {

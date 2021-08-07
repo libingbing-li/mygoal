@@ -51,11 +51,13 @@ class Goals extends React.Component<ModelSetting & { dispatch: any }> {
 
   renderDataBox = (data: GoalShow) => {
     return (
-      <div className={style.dataBox}>
+      <div className={style.dataBox} key={data.timeId}>
         <div className={style.titleBox}>
           <div className={style.title}>{data.title}</div>
           <div className={style.time}>
             {moment(data.timeId).format('YYYY-MM-DD')}
+            <br />
+            {moment(data.endTimeId).format('YYYY-MM-DD')}
           </div>
         </div>
         <div className={style.description}>
@@ -72,9 +74,11 @@ class Goals extends React.Component<ModelSetting & { dispatch: any }> {
                   day: number;
                 }) => {
                   return (
-                    <div>{`${new Date(data.year).getFullYear()}年：完成任务${
-                      data.day
-                    }天，${data.week}周，${data.month}月`}</div>
+                    <div key={data.year}>{`${new Date(
+                      data.year,
+                    ).getFullYear()}年：完成任务${data.day}天，${
+                      data.week
+                    }周，${data.month}月`}</div>
                   );
                 },
               )}
@@ -93,7 +97,7 @@ class Goals extends React.Component<ModelSetting & { dispatch: any }> {
         </div>
         <div className={style.body}>
           {this.state.data.length === 0
-            ? '当前不存在已完成任务'
+            ? '当前不存在已完成目标'
             : this.state.data.map((goal: GoalShow) => {
                 return this.renderDataBox(goal);
               })}

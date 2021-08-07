@@ -21,28 +21,31 @@ export default {
       if (success) {
         yield put({
           type: 'init',
+          payload: payload,
         });
       }
     },
     *init({ payload }: any, { put, call, select }: any) {
+      console.log('history-init');
       const state: ModelHistoryShow = yield select(
         (state: any) => state.historyshow,
       );
+      let minTime = payload ? payload?.minTime : state.minTime;
+      let maxTime = payload ? payload?.maxTime : state.maxTime;
       let dbName = 'Histories';
       let historydata: Array<HistoryShow> = yield indexedDB.getData(
         dbName,
         'timeId',
         undefined,
-        payload.minTime,
-        payload.maxTime,
+        minTime,
+        maxTime,
       );
-      console.log(payload, historydata);
       yield put({
         type: 'changeState',
         payload: {
           historydata: historydata ? historydata : [],
-          minTime: payload.minTime,
-          maxTime: payload.maxTime,
+          minTime: minTime,
+          maxTime: maxTime,
         },
       });
     },

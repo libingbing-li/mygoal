@@ -39,7 +39,7 @@ class Index extends React.Component<ModelIndex & { dispatch: any }> {
 
   componentDidMount = async () => {
     moment.locale('zh-cn');
-    console.log(this.props.nowPage);
+    // console.log(this.props.nowPage);
     this.props.dispatch({
       type: 'index/openDB',
     });
