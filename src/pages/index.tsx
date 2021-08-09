@@ -55,11 +55,11 @@ class Index extends React.Component<ModelIndex & { dispatch: any }> {
     const navbar: any = document.querySelector(`#navbar`);
     refreshBox.style.top = '0vh';
     navbar.style.marginTop = '15vh';
-    if (this.state.nowPage === 3) {
+    if (this.state.nowPage === 2) {
       this.props.dispatch({
         type: 'task/init',
       });
-    } else if (this.state.nowPage === 1) {
+    } else if (this.state.nowPage === 3) {
       this.props.dispatch({
         type: 'satisfy/init',
       });
@@ -68,6 +68,9 @@ class Index extends React.Component<ModelIndex & { dispatch: any }> {
         type: 'historyshow/init',
       });
     }
+    this.props.dispatch({
+      type: 'index/init',
+    });
     setTimeout(() => {
       refreshBox.style.top = '-15vh';
       navbar.style.marginTop = '0vh';

@@ -56,6 +56,7 @@ export default {
         1,
         nowTime,
       );
+      console.log('index', nowTime, tasksFinish);
       if (tasksFinish === null) {
         tasksFinish = [];
       }
@@ -337,6 +338,17 @@ export default {
           }
         }
       }
+
+      // 刷新
+      yield put({
+        type: 'historyshow/init',
+      });
+      yield put({
+        type: 'task/init',
+      });
+      yield put({
+        type: 'satisfy/init',
+      });
     },
     *goalDeal({ payload }: any, { put, call, select }: any) {
       // 获取当天的零点时间, 以处理昨天的完成任务
@@ -587,6 +599,17 @@ export default {
           console.log('index-init：刷新历史数据 - ' + successH);
         }
       }
+
+      // 刷新
+      yield put({
+        type: 'historyshow/init',
+      });
+      yield put({
+        type: 'task/init',
+      });
+      yield put({
+        type: 'satisfy/init',
+      });
     },
   },
 };

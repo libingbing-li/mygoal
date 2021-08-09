@@ -174,9 +174,8 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
           )}
         </div>
         <div className={styles.taskbody}>
-          <input
+          <textarea
             className={styles.txt}
-            type="text"
             value={this.props.txt}
             onChange={(e) => this.changeModelState('txt', e.target.value)}
           />

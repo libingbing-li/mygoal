@@ -41,6 +41,25 @@ export default {
           monthTasks: state.data.monthTasks,
         };
         success = yield indexedDB.put(dbName, data);
+
+        // 循环任务列表，更新任务tag
+        let taskdata: Array<TaskShow> = yield indexedDB.getData(
+          'Tasks',
+          'timeId',
+        );
+        let newTasks: Array<TaskShow> = [];
+        taskdata.forEach((task: TaskShow) => {
+          for (let i = 0; i < task.tags.length; i++) {
+            if (task.tags[i].timeId === Number(state.timeId)) {
+              task.tags.splice(i, 1, data);
+              break;
+            }
+            newTasks.push(task);
+          }
+        });
+        for (let i = 0; i < newTasks.length; i++) {
+          let success: boolean = yield indexedDB.put('Tasks', newTasks[i]);
+        }
       } else {
         console.log('进入添加');
         let dayTasks: Array<number> = [];
@@ -75,6 +94,7 @@ export default {
             timeId: 0,
             title: '',
             description: '',
+            finishDescription: [],
             data: null,
           },
         });
@@ -144,6 +164,7 @@ export default {
             timeId: 0,
             title: '',
             description: '',
+            finishDescription: [],
             data: null,
           },
         });
