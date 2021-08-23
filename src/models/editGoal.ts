@@ -14,6 +14,7 @@ export default {
   },
   reducers: {
     changeState(state: ModelEditGoal, { payload }: any) {
+      // console.log(payload)
       return { ...state, ...payload };
     },
   },
@@ -145,6 +146,9 @@ export default {
           'Tasks',
           'timeId',
         );
+        if (taskdata === null) {
+          taskdata = [];
+        }
         let newTasks: Array<TaskShow> = [];
         taskdata.forEach((task: TaskShow) => {
           for (let i = 0; i < task.tags.length; i++) {

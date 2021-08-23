@@ -58,7 +58,7 @@ class dataBox extends React.Component<
         </div>
         <div className={style.description}>{this.props.data.description}</div>
         <div className={style.finish}>
-          {console.log(this.props.data)}
+          {/* {console.log(this.props.data)} */}
           {this.props.data.finishDescription.length === 0 ? (
             <div>{`${new Date().getFullYear()}-累计在${
               this.props.data.dayTasks.length

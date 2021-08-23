@@ -4,7 +4,7 @@
 */
 
 import React from 'react';
-import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { CloseOutlined } from '@ant-design/icons';
 import style from './styles/Confirm.less';
 import { months } from 'moment';
 
@@ -18,6 +18,8 @@ const defaultProps = {
   confirmStr: '确认',
   cancelStr: '取消',
   txt: '是否进行操作',
+  closeIcon: false,
+  close: () => {},
 };
 type IProps = {
   id: string;
@@ -38,6 +40,11 @@ class Confirm extends React.Component<IProps & typeof defaultProps> {
         id={`confirm-${this.props.id}`}
         style={{ ...this.props.style }}
       >
+        <CloseOutlined
+          className={style.closeIcon}
+          style={{ display: this.props.closeIcon ? 'block' : 'none' }}
+          onClick={this.props.close}
+        />
         <div className={style.body}>{this.props.txt}</div>
         <div className={style.btns}>
           <div

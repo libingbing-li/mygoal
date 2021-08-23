@@ -15,12 +15,14 @@ import {
 } from '@ant-design/icons';
 import { GoalShow, ModelEditTask } from '../../utils/interface';
 import commonStyle from '@/common-styles/common.less';
+import Confirm from '@/common-components/Confirm';
 import styles from './styles/edit.less';
 import app from '@/utils/app';
 
 interface IState {
   tags: Array<GoalShow>;
   goaldata: Array<GoalShow>;
+  confirmShow: boolean;
 }
 
 // 该页面用于编辑展示日记
@@ -28,6 +30,7 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
   state: IState = {
     tags: [],
     goaldata: [],
+    confirmShow: false,
   };
 
   componentDidMount() {
@@ -132,17 +135,11 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
     });
   };
 
-  // 详情-编辑-下拉菜单
-  menu = (
-    <Menu>
-      <Menu.Item key="0" style={{ textAlign: 'center' }}>
-        <CheckOutlined style={{ margin: 0 }} onClick={this.save} />
-      </Menu.Item>
-      <Menu.Item key="1" style={{ textAlign: 'center' }}>
-        <DeleteOutlined style={{ margin: 0 }} onClick={this.remove} />
-      </Menu.Item>
-    </Menu>
-  );
+  confirmShow = () => {
+    this.setState((preState: IState) => ({
+      confirmShow: !preState.confirmShow,
+    }));
+  };
 
   // 后退清空数据
   back = () => {
@@ -162,15 +159,26 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
   render() {
     return (
       <div className={styles.edit_task}>
+        <Confirm
+          id="editGoalMore"
+          txt="请选择操作"
+          confirm={this.save}
+          confirmStr="保存"
+          cancel={this.remove}
+          cancelStr="删除"
+          closeIcon={true}
+          close={this.confirmShow}
+          style={{
+            display: this.state.confirmShow ? 'flex' : 'none',
+          }}
+        ></Confirm>
         <div className={styles.title}>
           <LeftOutlined onClick={this.back} />
           {history.location.query?.timeId === 'null' ? '新建目标' : '编辑目标'}
           {history.location.query?.timeId === 'null' ? (
             <CheckOutlined onClick={this.save} />
           ) : (
-            <Dropdown overlay={this.menu} trigger={['click']}>
-              <EllipsisOutlined />
-            </Dropdown>
+            <EllipsisOutlined onClick={this.confirmShow} />
           )}
         </div>
         <div className={styles.taskbody}>
