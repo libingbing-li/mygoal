@@ -25,6 +25,10 @@ const goaldata = {
   monthTasks: [],
 };
 
+interface IProps {
+  onRef: (ref: any) => {};
+}
+
 interface IState {
   timeArray: Array<Array<number>>;
   timeIndex: number;
@@ -39,7 +43,9 @@ interface IState {
 }
 
 // 用于展示tag数和时间的分布
-class Satisfy extends React.Component<ModelSatisfy & { dispatch: any }> {
+class Satisfy extends React.Component<
+  ModelSatisfy & IProps & { dispatch: any }
+> {
   state: IState = {
     timeArray: [[], [], []],
     timeIndex: 0,
@@ -54,6 +60,7 @@ class Satisfy extends React.Component<ModelSatisfy & { dispatch: any }> {
   };
 
   componentDidMount = () => {
+    this.props.onRef(this);
     this.props.dispatch({
       type: 'satisfy/init',
     });

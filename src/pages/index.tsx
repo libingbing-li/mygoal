@@ -44,6 +44,16 @@ class Index extends React.Component<ModelIndex & { dispatch: any }> {
       type: 'index/openDB',
     });
   };
+  // 关闭goal数据框
+  goal: any = null;
+  onGoalRef = (ref: any) => {
+    this.goal = ref;
+  };
+  dataBoxClose = () => {
+    if (this.goal !== null) {
+      this.goal.dataBoxClose();
+    }
+  };
 
   // 下拉行为 - 刷新
   refresh = (e: any) => {
@@ -79,6 +89,8 @@ class Index extends React.Component<ModelIndex & { dispatch: any }> {
   };
   // 左滑行为
   slideLeft = () => {
+    // 关闭goal数据框
+    this.dataBoxClose();
     console.log('slideLeft');
     if (this.state.nowPage == 1) {
       return;
@@ -118,6 +130,8 @@ class Index extends React.Component<ModelIndex & { dispatch: any }> {
   };
   // 右滑行为
   slideRight = () => {
+    // 关闭goal数据框
+    this.dataBoxClose();
     console.log('slideRight');
     if (this.state.nowPage == this.state.pageNum) {
       return;
@@ -286,7 +300,7 @@ class Index extends React.Component<ModelIndex & { dispatch: any }> {
                 className={styles.page}
                 style={{ left: `${-(this.state.nowPage * 100 - 300)}vw` }}
               >
-                <Satisfy></Satisfy>
+                <Satisfy onRef={this.onGoalRef}></Satisfy>
               </div>
             </SlideBox>
           </div>

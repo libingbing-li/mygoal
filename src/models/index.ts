@@ -280,7 +280,7 @@ export default {
         }
 
         // 根据任务的循环设定新建下一个任务
-        let intervalNum = 0;
+        let intervalNum = 0; //循环任务的间隔天数
         switch (tasksFinish[i].interval.type) {
           case 1:
             break;
@@ -315,10 +315,14 @@ export default {
             tasksFinish[i].timeId,
           );
           if (removeTask) {
-            let newTask = tasksFinish[i];
-            newTask.timeId =
-              tasksFinish[i].timeId + intervalNum * 24 * 60 * 60 * 1000;
-            newTask.endTimeId = 0;
+            let newTask: TaskShow = {
+              timeId: tasksFinish[i].timeId + intervalNum * 24 * 60 * 60 * 1000,
+              endTimeId: 0,
+              txt: tasksFinish[i].txt,
+              tags: tasksFinish[i].tags,
+              interval: tasksFinish[i].interval,
+            };
+
             const addTask: boolean = yield indexedDB.add('Tasks', newTask);
             if (addTask) {
               console.log('添加循环任务成功，删除已完成任务成功');
@@ -384,12 +388,13 @@ export default {
         nowTime,
       );
       if (goalFinish === null) {
-        goalFinish = [];
+        return;
       }
 
       let taskdata: Array<TaskShow> = yield indexedDB.getData(
         'Tasks',
-        'timeId',
+        'endTimeId',
+        0,
       );
 
       if (taskdata === null) {

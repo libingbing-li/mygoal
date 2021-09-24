@@ -162,6 +162,9 @@ class IndexedDB {
           ? IDBKeyRange.lowerBound(minKey)
           : IDBKeyRange.upperBound(maxKey)
         : undefined;
+      if (key === 0) {
+        keyRangeValue = IDBKeyRange.only(key);
+      }
       let request = objectStoreIndex?.count(keyRangeValue);
       let length = 0;
       if (request) {
