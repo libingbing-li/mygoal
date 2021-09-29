@@ -174,7 +174,7 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
         ></Confirm>
         <div className={styles.title}>
           <LeftOutlined onClick={this.back} />
-          {history.location.query?.timeId === 'null' ? '新建目标' : '编辑目标'}
+          {history.location.query?.timeId === 'null' ? '新建任务' : '编辑任务'}
           {history.location.query?.timeId === 'null' ? (
             <CheckOutlined onClick={this.save} />
           ) : (

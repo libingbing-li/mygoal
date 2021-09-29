@@ -68,6 +68,7 @@ export interface ModelHistoryShow {
 }
 export interface ModelTask {
   taskdata: Array<TaskShow>;
+  nextTaskData: Array<TaskShow>;
   scrollTop: number;
 }
 export interface ModelSetting {

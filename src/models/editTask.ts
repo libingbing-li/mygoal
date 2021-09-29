@@ -145,7 +145,11 @@ export default {
     },
     *init({ payload }: any, { put, call, select }: any) {
       let dbName = 'Goals';
-      let goaldata: Array<GoalShow> = yield indexedDB.getData(dbName, 'timeId');
+      let goaldata: Array<GoalShow> = yield indexedDB.getData(
+        dbName,
+        'endTimeId',
+        0,
+      );
       yield put({
         type: 'changeState',
         payload: {

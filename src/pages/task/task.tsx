@@ -11,10 +11,16 @@ import styles from './styles/task.less';
 import app from '@/utils/app';
 import './styles/antd.css';
 
-interface IState {}
+interface IState {
+  showMore: boolean;
+  showMoreStr: string;
+}
 // 展示日记，可以点击进入详情
 class Task extends React.Component<ModelTask & { dispatch: any }> {
-  state: IState = {};
+  state: IState = {
+    showMore: false,
+    showMoreStr: '更多',
+  };
 
   componentDidMount = () => {
     this.props.dispatch({
@@ -32,6 +38,13 @@ class Task extends React.Component<ModelTask & { dispatch: any }> {
     if (scrollBox) {
       scrollBox.scrollTop = this.props.scrollTop;
     }
+  };
+
+  showMore = () => {
+    this.setState((preState: IState) => ({
+      showMore: !preState.showMore,
+      showMoreStr: !preState.showMore === true ? '收起' : '更多',
+    }));
   };
 
   taskfinish = (task: TaskShow) => {
@@ -107,6 +120,22 @@ class Task extends React.Component<ModelTask & { dispatch: any }> {
           <div className={styles.nothing}>任务已经全部完成啦!</div>
         ) : (
           this.props.taskdata.map((item: TaskShow) => {
+            return this.showTask(item);
+          })
+        )}
+        <div
+          className={styles.nothing}
+          style={{
+            display: this.props.nextTaskData.length === 0 ? 'none' : 'block',
+          }}
+          onClick={this.showMore}
+        >
+          ——————{this.state.showMoreStr}——————
+        </div>
+        {this.state.showMore === false ? (
+          <div></div>
+        ) : (
+          this.props.nextTaskData.map((item: TaskShow) => {
             return this.showTask(item);
           })
         )}

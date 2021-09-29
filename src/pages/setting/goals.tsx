@@ -64,7 +64,7 @@ class Goals extends React.Component<ModelSetting & { dispatch: any }> {
           {data.description === '' ? '该目标无描述' : data.description}
         </div>
         <div className={style.finish}>
-          {data.description.length === 0
+          {data.finishDescription.length === 0
             ? '该目标无记录'
             : data.finishDescription.map(
                 (data: {

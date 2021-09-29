@@ -7,6 +7,7 @@ export default {
   state: {
     scrollTop: 0,
     taskdata: [],
+    nextTaskData: [],
   },
   reducers: {
     changeState(state: ModelTask, { payload }: any) {
@@ -25,11 +26,42 @@ export default {
     *init({ payload }: any, { put, call, select }: any) {
       const state: ModelTask = yield select((state: any) => state.task);
       let dbName = 'Tasks';
-      let taskdata: Array<TaskShow> = yield indexedDB.getData(dbName, 'timeId');
+      // 获取下一天的零点时间, 以处理昨天的完成任务
+      let nextTime =
+        new Date(
+          `${new Date().getFullYear()}-${
+            new Date().getMonth() + 1
+          }-${new Date().getDate()}`,
+        ).getTime() +
+        24 * 60 * 60 * 1000;
+      let taskdata: Array<TaskShow> = yield indexedDB.getData(
+        dbName,
+        'timeId',
+        undefined,
+        1,
+        nextTime,
+      );
+      let allTaskdata: Array<TaskShow> = yield indexedDB.getData(
+        dbName,
+        'timeId',
+      );
+      let nextTaskData: Array<TaskShow> = [];
+      if (allTaskdata) {
+        if (taskdata) {
+          for (let i = taskdata.length; i < allTaskdata.length; i++) {
+            nextTaskData.push(allTaskdata[i]);
+          }
+        } else {
+          for (let i = 0; i < allTaskdata.length; i++) {
+            nextTaskData.push(allTaskdata[i]);
+          }
+        }
+      }
       yield put({
         type: 'changeState',
         payload: {
           taskdata: taskdata ? taskdata : [],
+          nextTaskData,
         },
       });
     },

@@ -149,7 +149,7 @@ export default {
         goal.endTimeId = 0;
       }
       let dbName = 'Goals';
-      console.log(goal);
+      // console.log(goal);
       let success: boolean = yield indexedDB.put(dbName, goal);
       if (success) {
         yield put({
