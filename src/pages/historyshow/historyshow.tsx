@@ -64,21 +64,21 @@ class HistoryShowList extends React.Component<
     );
   };
 
-  onChange = (date: any, dateString: string) => {
-    let maxTime = new Date(
-      `${moment(date).year()}-${moment(date).month() + 2}`,
-    );
-    if (moment(date).month() === 11) {
-      maxTime = new Date(`${moment(date).year() + 1}-1`);
-    }
-    this.props.dispatch({
-      type: 'historyshow/init',
-      payload: {
-        minTime: new Date(dateString).getTime(),
-        maxTime: maxTime.getTime(),
-      },
-    });
-  };
+  // onChange = (date: any, dateString: string) => {
+  //   let maxTime = new Date(
+  //     `${moment(date).year()}-${moment(date).month() + 2} 00:00:00`,
+  //   );
+  //   if (moment(date).month() === 11) {
+  //     maxTime = new Date(`${moment(date).year() + 1}-1 00:00:00`);
+  //   }
+  //   this.props.dispatch({
+  //     type: 'historyshow/init',
+  //     payload: {
+  //       minTime: new Date(dateString).getTime(),
+  //       maxTime: maxTime.getTime(),
+  //     },
+  //   });
+  // };
 
   getTime = (year: number, month: number, date: number) => {
     let yearMax = 0;
@@ -91,14 +91,14 @@ class HistoryShowList extends React.Component<
       monthMax = month + 1;
     }
     console.log('histime', {
-      minTime: new Date(`${year}-${month}-1`).getTime(),
-      maxTime: new Date(`${yearMax}-${monthMax}-1`).getTime() - 1,
+      minTime: new Date(`${year}-${month}-1 00:00:00`).getTime(),
+      maxTime: new Date(`${yearMax}-${monthMax}-1 00:00:00`).getTime() - 1,
     });
     this.props.dispatch({
       type: 'historyshow/openDB',
       payload: {
-        minTime: new Date(`${year}-${month}-1`).getTime(),
-        maxTime: new Date(`${yearMax}-${monthMax}-1`).getTime() - 1,
+        minTime: new Date(`${year}-${month}-1 00:00:00`).getTime(),
+        maxTime: new Date(`${yearMax}-${monthMax}-1 00:00:00`).getTime() - 1,
       },
     });
   };

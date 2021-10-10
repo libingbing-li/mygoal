@@ -31,7 +31,7 @@ export default {
         new Date(
           `${new Date().getFullYear()}-${
             new Date().getMonth() + 1
-          }-${new Date().getDate()}`,
+          }-${new Date().getDate()} 00:00:00`,
         ).getTime() +
         24 * 60 * 60 * 1000;
       let taskdata: Array<TaskShow> = yield indexedDB.getData(

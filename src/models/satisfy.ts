@@ -21,11 +21,13 @@ export default {
       let nowTime = new Date(
         `${new Date().getFullYear()}-${
           new Date().getMonth() + 1
-        }-${new Date().getDate()}`,
+        }-${new Date().getDate()} 00:00:00`,
       ).getTime();
+      // console.log(new Date(1633017600000),new Date(1633017600000).getFullYear(), new Date(1633017600000).getMonth(),new Date(1633017600000).getDate(),)
 
       // 天
       let dayTime = nowTime - 24 * 60 * 60 * 1000;
+      // console.log(nowTime);
       let dayArr: Array<number> = [];
       for (let i = 1; i <= 30; i++) {
         dayArr.push(dayTime);
@@ -49,7 +51,7 @@ export default {
       let month = new Date(nowTime).getMonth() + 1;
       let monthArr: Array<number> = [];
       for (let i = 1; i <= 12; i++) {
-        monthArr.push(new Date(`${year}-${month}-1`).getTime());
+        monthArr.push(new Date(`${year}-${month}-1 00:00:00`).getTime());
         month--;
         if (month === 0) {
           year = year - 1;
@@ -79,7 +81,6 @@ export default {
       let goaldata: Array<GoalShow> = [];
       let minTime = state.minTime;
       let maxTime = state.maxTime;
-      let taskSatisfy: Array<boolean> = [];
 
       goaldata = yield indexedDB.getData(dbName, 'timeId');
       if (goaldata === null) {
@@ -136,7 +137,6 @@ export default {
           goaldata,
           minTime,
           maxTime,
-          taskSatisfy,
         },
       });
     },

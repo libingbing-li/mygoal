@@ -17,4 +17,5 @@ export default defineConfig({
     { path: '/alldata', component: '@/pages/setting/alldata' },
     { path: '/goals', component: '@/pages/setting/goals' },
   ],
+  mfsu: {},
 });

@@ -71,8 +71,8 @@ class AllData extends React.Component<ModelSetting & { dispatch: any }> {
     this.props.dispatch({
       type: 'setting/changeState',
       payload: {
-        minTime: new Date(`${year}-${month}-1`).getTime(),
-        maxTime: new Date(`${yearMax}-${monthMax}-1`).getTime(),
+        minTime: new Date(`${year}-${month}-1 00:00:00`).getTime(),
+        maxTime: new Date(`${yearMax}-${monthMax}-1 00:00:00`).getTime(),
       },
     });
   };

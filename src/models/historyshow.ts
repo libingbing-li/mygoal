@@ -45,8 +45,8 @@ export default {
           yearMax = year;
           monthMax = month + 1;
         }
-        minTime = new Date(`${year}-${month}-1`).getTime();
-        maxTime = new Date(`${yearMax}-${monthMax}-1`).getTime() - 1;
+        minTime = new Date(`${year}-${month}-1 00:00:00`).getTime();
+        maxTime = new Date(`${yearMax}-${monthMax}-1 00:00:00`).getTime() - 1;
       }
 
       let dbName = 'Histories';

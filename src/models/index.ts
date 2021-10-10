@@ -43,8 +43,9 @@ export default {
       let nowTime = new Date(
         `${new Date().getFullYear()}-${
           new Date().getMonth() + 1
-        }-${new Date().getDate()}`,
+        }-${new Date().getDate()} 00:00:00`,
       ).getTime();
+      // console.log('index init',new Date(nowTime),new Date(nowTime).getFullYear(), new Date(nowTime).getMonth(),new Date(nowTime).getDate(),)
       // 测试用，修改到第二天的零点，以便刷新测试
       // nowTime = nowTime + 24 * 60 * 60 * 1000;
       /*
@@ -67,7 +68,7 @@ export default {
         let dayTime = new Date(
           `${new Date(tasksFinish[i].endTimeId).getFullYear()}-${
             new Date(tasksFinish[i].endTimeId).getMonth() + 1
-          }-${new Date(tasksFinish[i].endTimeId).getDate()}`,
+          }-${new Date(tasksFinish[i].endTimeId).getDate()} 00:00:00`,
         ).getTime();
         let week = new Date(tasksFinish[i].endTimeId).getDay(); // 0-6, 0表示周天
         if (week === 0) {
@@ -77,10 +78,10 @@ export default {
         let monthTime = new Date(
           `${new Date(tasksFinish[i].endTimeId).getFullYear()}-${
             new Date(tasksFinish[i].endTimeId).getMonth() + 1
-          }-1`,
+          }-1 00:00:00`,
         ).getTime();
         let yearTime = new Date(
-          `${new Date(tasksFinish[i].endTimeId).getFullYear()}-1-1`,
+          `${new Date(tasksFinish[i].endTimeId).getFullYear()}-1-1 00:00:00`,
         ).getTime();
 
         /* 
@@ -136,7 +137,9 @@ export default {
             (weekNow - 1) * 24 * 60 * 60 * 1000 -
             24 * 7 * 24 * 60 * 60 * 1000;
           let minMonthTime = new Date(
-            `${new Date().getFullYear() - 1}-${new Date().getMonth() + 1}-1`,
+            `${new Date().getFullYear() - 1}-${
+              new Date().getMonth() + 1
+            }-1 00:00:00`,
           ).getTime();
 
           if (
@@ -374,7 +377,7 @@ export default {
       let nowTime = new Date(
         `${new Date().getFullYear()}-${
           new Date().getMonth() + 1
-        }-${new Date().getDate()}`,
+        }-${new Date().getDate()} 00:00:00`,
       ).getTime();
       /*
       对已完成的目标进行归纳
@@ -421,14 +424,16 @@ export default {
         let dayTime = new Date(
           `${new Date(goalFinish[i].endTimeId).getFullYear()}-${
             new Date(goalFinish[i].endTimeId).getMonth() + 1
-          }-${new Date(goalFinish[i].endTimeId).getDate()}`,
+          }-${new Date(goalFinish[i].endTimeId).getDate()} 00:00:00`,
         ).getTime();
 
         /*
           对记录任务完成数组进行删除整理
           */
         goalFinish[i].dayTasks.forEach((day: number) => {
-          let yearTime = new Date(`${new Date(day).getFullYear}-1-1`).getTime();
+          let yearTime = new Date(
+            `${new Date(day).getFullYear}-1-1 00:00:00`,
+          ).getTime();
           let yearIndex = 0;
           if (goalFinish[i].finishDescription.length === 0) {
             goalFinish[i].finishDescription.push({
@@ -470,7 +475,7 @@ export default {
 
         goalFinish[i].weekTasks.forEach((week: number) => {
           let yearTime = new Date(
-            `${new Date(week).getFullYear}-1-1`,
+            `${new Date(week).getFullYear}-1-1 00:00:00`,
           ).getTime();
           let yearIndex = 0;
           if (goalFinish[i].finishDescription.length === 0) {
@@ -513,7 +518,7 @@ export default {
 
         goalFinish[i].monthTasks.forEach((month: number) => {
           let yearTime = new Date(
-            `${new Date(month).getFullYear}-1-1`,
+            `${new Date(month).getFullYear}-1-1 00:00:00`,
           ).getTime();
           let yearIndex = 0;
           if (goalFinish[i].finishDescription.length === 0) {

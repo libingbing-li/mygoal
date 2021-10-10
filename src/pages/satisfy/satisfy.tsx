@@ -142,18 +142,23 @@ class Satisfy extends React.Component<
     let gY = 0;
     goalBox?.addEventListener('touchstart', (e: any) => {
       gY = e.changedTouches[0].clientY; //记录手指第一次触碰屏幕的坐标点
+      // console.log('start', gtop)
     });
     // 获取当前的left (如果为auto的话，就要从当前的right来计算left值了 *本处不做auto预防处理，是因为left通过state中数据计算)
-    let gtop = Number(
-      goalBox.style.top.substring(0, goalBox.style.top.length - 2),
-    );
+    // let gtop = Number(
+    //   goalBox.style.top.substring(0, goalBox.style.top.length - 2),
+    // );
     goalBox?.addEventListener('touchmove', (e: any) => {
+      // console.log('move')
       gBh = gBox?.clientHeight; //在弹窗出现后可以滚动
       // console.log(gBh)
       if (gh <= gBh) return;
       // 记录移动的距离
       let y = e.changedTouches[0].clientY - gY;
       gY = e.changedTouches[0].clientY;
+      let gtop = Number(
+        goalBox.style.top.substring(0, goalBox.style.top.length - 2),
+      );
       gtop = gtop + y;
       if (gtop >= 0) {
         gtop = 0;
@@ -167,12 +172,16 @@ class Satisfy extends React.Component<
     goalBox?.addEventListener('touchend', (e: any) => {
       if (gh <= gBh) return;
       let y = e.changedTouches[0].clientY - gY;
+      let gtop = Number(
+        goalBox.style.top.substring(0, goalBox.style.top.length - 2),
+      );
       gtop = gtop + y;
       if (gtop >= 0) {
         gtop = 0;
       } else if (gBh - gtop - gh > 0) {
         gtop = gBh - gh - 0;
       }
+      // console.log('end', gtop)
       this.setState({
         top: gtop + 'px',
       });
@@ -283,6 +292,7 @@ class Satisfy extends React.Component<
     );
   };
 
+  // cut切换横向时间轴类型（日/周/月） init初始化横向时间轴(日)
   setTimeType = (type: string) => {
     let index = this.state.timeIndex;
     if (type === 'init') {

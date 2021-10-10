@@ -125,7 +125,7 @@ export default {
       let nowTime = new Date(
         `${new Date().getFullYear()}-${
           new Date().getMonth() + 1
-        }-${new Date().getDate()}`,
+        }-${new Date().getDate()} 00:00:00`,
       ).getTime();
       /*
       对已完成的目标进行归纳

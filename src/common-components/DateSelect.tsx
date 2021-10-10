@@ -106,7 +106,7 @@ class DateSelect extends React.Component<IProps & typeof defaultProps> {
         str1 = month + '.' + date;
         str2 = year + '.' + month;
         const nextM = month + 1 === 13 ? 1 : month + 1;
-        const nextMonth = new Date(`${year}-${nextM}-1`);
+        const nextMonth = new Date(`${year}-${nextM}-1 00:00:00`);
         const monthLength = new Date(nextMonth.getTime() - 1).getDate(); //获得month月的最大天数
         const Mday = new Date(`${year}-${month}-1`).getDay(); //获得month月1号是周几 0-6 日-六
         for (let i = 0; i < Mday; i++) {
@@ -157,7 +157,7 @@ class DateSelect extends React.Component<IProps & typeof defaultProps> {
         break;
       case 2:
         // 上一天
-        const nowMonth = new Date(`${year}-${month}-1`);
+        const nowMonth = new Date(`${year}-${month}-1 00:00:00`);
         const monthLength = new Date(nowMonth.getTime() - 1).getDate();
         if (date === 1) {
           date = monthLength;
@@ -191,7 +191,7 @@ class DateSelect extends React.Component<IProps & typeof defaultProps> {
       case 2:
         // 下一天
         const nextM = month + 1 === 13 ? 1 : month + 1;
-        const nowMonth = new Date(`${year}-${nextM}-1`);
+        const nowMonth = new Date(`${year}-${nextM}-1 00:00:00`);
         const monthLength = new Date(nowMonth.getTime() - 1).getDate();
         if (date === monthLength) {
           date = 1;
@@ -226,7 +226,7 @@ class DateSelect extends React.Component<IProps & typeof defaultProps> {
         } else {
           month = month - 1;
         }
-        const nowMonth = new Date(`${year}-${month}-1`);
+        const nowMonth = new Date(`${year}-${month}-1 00:00:00`);
         const monthLength = new Date(nowMonth.getTime() - 1).getDate();
         if (date > monthLength) {
           date = monthLength;
@@ -254,7 +254,7 @@ class DateSelect extends React.Component<IProps & typeof defaultProps> {
         }
 
         const nextM = month + 2 === 13 ? 1 : month + 2;
-        const nowMonth = new Date(`${year}-${nextM}-1`);
+        const nowMonth = new Date(`${year}-${nextM}-1 00:00:00`);
         const monthLength = new Date(nowMonth.getTime() - 1).getDate();
         if (date > monthLength) {
           date = monthLength;
