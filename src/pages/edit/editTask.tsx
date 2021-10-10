@@ -52,21 +52,11 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
 
   //在本处获取新的props并更新
   componentWillReceiveProps = (nextProps: ModelEditTask) => {
-    if (this.state.goaldata.length === 0 && this.state.tags.length === 0) {
-      let goaldata = nextProps.goaldata || [];
-      if (nextProps.data) {
-        nextProps.data.tags.forEach((tag: GoalShow) => {
-          for (let i = 0; i < goaldata.length; i++) {
-            if (goaldata[i].timeId === tag.timeId) {
-              goaldata.splice(i, 1);
-              break;
-            }
-          }
-        });
-      }
+    if (this.state.goaldata.length === 0 || this.state.tags.length === 0) {
+      console.log(nextProps);
       this.setState({
         tags: nextProps.data ? nextProps.data.tags : [],
-        goaldata: goaldata,
+        goaldata: nextProps.goaldata,
       });
     }
   };
@@ -353,7 +343,7 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
               >
                 <input
                   type="number"
-                  value={this.props.interval.num[0]}
+                  value={this.props.interval.num[0] || 0}
                   onChange={(e) => {
                     this.changeModelState('interval', {
                       type: 3,

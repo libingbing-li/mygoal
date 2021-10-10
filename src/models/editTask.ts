@@ -101,6 +101,23 @@ export default {
         Number(payload.timeId),
       );
       let data = dataArr[0];
+      let goaldata: Array<GoalShow> = yield indexedDB.getData(
+        'Goals',
+        'endTimeId',
+        0,
+      );
+      goaldata = goaldata || [];
+      if (data) {
+        data.tags.forEach((tag: GoalShow) => {
+          for (let i = 0; i < goaldata.length; i++) {
+            if (goaldata[i].timeId === tag.timeId) {
+              goaldata.splice(i, 1);
+              break;
+            }
+          }
+        });
+      }
+      console.log('model', data);
       yield put({
         type: 'changeState',
         payload: {
@@ -108,6 +125,7 @@ export default {
           txt: data.txt,
           interval: data.interval,
           data,
+          goaldata,
         },
       });
     },
