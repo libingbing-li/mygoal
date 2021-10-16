@@ -142,7 +142,7 @@ export default {
         dbName,
         Number(state.timeId),
       );
-      console.log(success, state.timeId);
+      // console.log(success, state.timeId);
       if (success) {
         yield put({
           type: 'changeState',
@@ -150,6 +150,7 @@ export default {
             timeId: 0,
             txt: '',
             tags: [],
+            interval: { type: 1, num: 0 },
             data: null,
           },
         });
