@@ -4,19 +4,7 @@ import app from './app';
 // 实例的存储
 const list = [
   // 目标
-  [
-    'Goals',
-    [
-      'timeId',
-      'endTimeId',
-      'title',
-      'description',
-      'finishDescription',
-      'dayTasks',
-      'weekTasks',
-      'monthTasks',
-    ],
-  ],
+  ['Goals', ['timeId', 'endTimeId', 'title', 'description', 'dayTasks']],
   // 任务
   ['Tasks', ['timeId', 'endTimeId', 'txt']],
   // 历史
@@ -287,19 +275,15 @@ class IndexedDB {
       // console.log(data);
       const nameList = ['Goals', 'Tasks', 'Histories'];
       const set = () => {
-        let j = 1;
         nameList.forEach((name: string) => {
           const p = this.setData(name, data[name], minTime, maxTime);
           p.then((success) => {
             if (!success) {
               resolve(false);
             }
-            if (j === nameList.length) {
-              resolve(true);
-            }
-            j++;
           });
         });
+        resolve(true);
       };
       // 清空
       let i = 1;
@@ -308,15 +292,10 @@ class IndexedDB {
         p.then((success) => {
           if (!success) {
             resolve(false);
-          } else {
-            if (i === nameList.length) {
-              // 结束清空,开始重置
-              set();
-            }
-            i++;
           }
         });
       });
+      set();
     });
     return promise;
   };

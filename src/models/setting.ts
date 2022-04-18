@@ -90,12 +90,11 @@ export default {
       //     app.info('该文件为空文件');
       //   }
       // }
-
       const state: ModelSetting = yield select((state: any) => state.setting);
       // 读取文本
       const setInput: any = document.querySelector('#alldata');
       const data = setInput?.value;
-      if (data === '') {
+      if (!data) {
         app.info('框内不存在文本');
         return;
       }
@@ -110,6 +109,7 @@ export default {
         state.minTime,
         state.maxTime,
       );
+      console.log(success);
       if (success) {
         console.log('导入成功');
         app.info('导入成功');

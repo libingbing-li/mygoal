@@ -39,6 +39,7 @@ export default {
       console.log('index/init');
     },
     *taskDeal({ payload }: any, { put, call, select }: any) {
+      console.log('taskDeal', new Date());
       // 获取当天的零点时间, 以处理昨天的完成任务
       let nowTime = new Date(
         `${new Date().getFullYear()}-${
@@ -70,19 +71,19 @@ export default {
             new Date(tasksFinish[i].endTimeId).getMonth() + 1
           }-${new Date(tasksFinish[i].endTimeId).getDate()} 00:00:00`,
         ).getTime();
-        let week = new Date(tasksFinish[i].endTimeId).getDay(); // 0-6, 0表示周天
-        if (week === 0) {
-          week = 7;
-        }
-        let weekTime = dayTime - (week - 1) * 24 * 60 * 60 * 1000;
-        let monthTime = new Date(
-          `${new Date(tasksFinish[i].endTimeId).getFullYear()}-${
-            new Date(tasksFinish[i].endTimeId).getMonth() + 1
-          }-1 00:00:00`,
-        ).getTime();
-        let yearTime = new Date(
-          `${new Date(tasksFinish[i].endTimeId).getFullYear()}-1-1 00:00:00`,
-        ).getTime();
+        // let week = new Date(tasksFinish[i].endTimeId).getDay(); // 0-6, 0表示周天
+        // if (week === 0) {
+        //   week = 7;
+        // }
+        // let weekTime = dayTime - (week - 1) * 24 * 60 * 60 * 1000;
+        // let monthTime = new Date(
+        //   `${new Date(tasksFinish[i].endTimeId).getFullYear()}-${
+        //     new Date(tasksFinish[i].endTimeId).getMonth() + 1
+        //   }-1 00:00:00`,
+        // ).getTime();
+        // let yearTime = new Date(
+        //   `${new Date(tasksFinish[i].endTimeId).getFullYear()}-1-1 00:00:00`,
+        // ).getTime();
 
         /* 
         对当前任务的tag进行处理
@@ -106,7 +107,7 @@ export default {
             // 当该数组不存在零点时间，或最后一个零点时间（最大的那个 小于当前任务的零点时间，就添加进去
             goal.dayTasks.push(dayTime);
           }
-          if (
+          /* if (
             goal.weekTasks.length === 0 ||
             goal.weekTasks[goal.weekTasks.length - 1] < weekTime
           ) {
@@ -120,15 +121,15 @@ export default {
             // 当该数组不存在零点时间，或最后一个零点时间（最大的那个 小于当前任务的零点时间，就添加进去
             goal.monthTasks.push(monthTime);
           }
-
+          */
           /*
           对记录任务完成数组进行删除整理
           方法1： 获取最早的时间，小于该时间的删除
           */
-          let yearIndex = 0;
+          // let yearIndex = 0;
 
           let minDateTime = nowTime - 30 * 24 * 60 * 60 * 1000;
-          let weekNow = new Date(nowTime).getDay();
+          /* let weekNow = new Date(nowTime).getDay();
           if (weekNow === 0) {
             weekNow = 7;
           }
@@ -140,12 +141,13 @@ export default {
             `${new Date().getFullYear() - 1}-${
               new Date().getMonth() + 1
             }-1 00:00:00`,
-          ).getTime();
+          ).getTime(); */
 
-          if (
-            goal.dayTasks[0] < minDateTime ||
+          //超过三十天
+          /* if (
+            goal.dayTasks[0] < minDateTime  ||
             goal.weekTasks[0] < minWeekTime ||
-            goal.monthTasks[0] < minMonthTime
+            goal.monthTasks[0] < minMonthTime 
           ) {
             if (goal.finishDescription.length === 0) {
               goal.finishDescription.push({
@@ -166,7 +168,7 @@ export default {
                 day: 0,
               });
             } else {
-              // goal.finishDescription[goal.finishDescription.length - 1].year >= yearTime
+              goal.finishDescription[goal.finishDescription.length - 1].year >= yearTime
               for (let k = goal.finishDescription.length - 1; k >= 0; k--) {
                 if (goal.finishDescription[k].year === yearTime) {
                   yearIndex = k;
@@ -174,8 +176,8 @@ export default {
                 }
               }
             }
-          }
-          while (goal.monthTasks[0] < minMonthTime) {
+          } */
+          /* while (goal.monthTasks[0] < minMonthTime) {
             goal.monthTasks.splice(0, 1);
             goal.finishDescription[yearIndex].month =
               goal.finishDescription[yearIndex].month + 1;
@@ -184,11 +186,10 @@ export default {
             goal.weekTasks.splice(0, 1);
             goal.finishDescription[yearIndex].week =
               goal.finishDescription[yearIndex].week + 1;
-          }
+          } */
           while (goal.dayTasks[0] < minDateTime) {
             goal.dayTasks.splice(0, 1);
-            goal.finishDescription[yearIndex].day =
-              goal.finishDescription[yearIndex].day + 1;
+            goal.moreday++;
           }
 
           // console.log(goal);
@@ -284,12 +285,16 @@ export default {
 
         // 根据任务的循环设定新建下一个任务
         let intervalNum = 0; //循环任务的间隔天数
+        //判断按创建时间还是按完成时间循环
+        const timeId = tasksFinish[i].intervalTimeType
+          ? tasksFinish[i].timeId
+          : tasksFinish[i].endTimeId;
         switch (tasksFinish[i].interval.type) {
           case 1:
             break;
           case 2:
             // 周
-            let weekNew = new Date(tasksFinish[i].timeId).getDay(); //0-6 0周天
+            let weekNew = new Date(timeId).getDay(); //0-6 0周天
             console.log(weekNew, 'weekNew');
             if (weekNew === 0) {
               weekNew = 7;
@@ -319,11 +324,12 @@ export default {
           );
           if (removeTask) {
             let newTask: TaskShow = {
-              timeId: tasksFinish[i].timeId + intervalNum * 24 * 60 * 60 * 1000,
+              timeId: timeId + intervalNum * 24 * 60 * 60 * 1000,
               endTimeId: 0,
               txt: tasksFinish[i].txt,
               tags: tasksFinish[i].tags,
               interval: tasksFinish[i].interval,
+              intervalTimeType: tasksFinish[i].intervalTimeType,
             };
 
             const addTask: boolean = yield indexedDB.add('Tasks', newTask);
@@ -373,27 +379,35 @@ export default {
       });
     },
     *goalDeal({ payload }: any, { put, call, select }: any) {
+      console.log('goalDeal', new Date());
       // 获取当天的零点时间, 以处理昨天的完成任务
       let nowTime = new Date(
         `${new Date().getFullYear()}-${
           new Date().getMonth() + 1
         }-${new Date().getDate()} 00:00:00`,
       ).getTime();
+      // 对全体目标进行巡逻，将dayTask超出时限的部分删除加入moreday，获得完成目标
+      let goalFinish: Array<GoalShow> = [];
+      let minDateTime = nowTime - 30 * 24 * 60 * 60 * 1000;
+      let goalarr: Array<GoalShow> = yield indexedDB.getData('Goals');
+      if (goalarr === null) {
+        return;
+      }
+      goalarr.forEach((goal: GoalShow) => {
+        if (goal.dayTasks[0] < minDateTime) {
+          while (goal.dayTasks[0] < minDateTime) {
+            goal.dayTasks.splice(0, 1);
+            goal.moreday++;
+          }
+          indexedDB.put('Goals', goal);
+        }
+        if (goal.endTimeId !== 0) goalFinish.push(goal);
+      });
+
       /*
       对已完成的目标进行归纳
       */
-      //  获取完成目标列表
-      let goalFinish: Array<GoalShow> = yield indexedDB.getData(
-        'Goals',
-        'endTimeId',
-        undefined,
-        1,
-        nowTime,
-      );
-      if (goalFinish === null) {
-        return;
-      }
-
+      if (goalFinish.length === 0) return;
       let taskdata: Array<TaskShow> = yield indexedDB.getData(
         'Tasks',
         'endTimeId',
@@ -430,11 +444,10 @@ export default {
         /*
           对记录任务完成数组进行删除整理
           */
-        goalFinish[i].dayTasks.forEach((day: number) => {
+        /* goalFinish[i].dayTasks.forEach((day: number) => {
           let yearTime = new Date(
             `${new Date(day).getFullYear}-1-1 00:00:00`,
           ).getTime();
-          let yearIndex = 0;
           if (goalFinish[i].finishDescription.length === 0) {
             goalFinish[i].finishDescription.push({
               year: yearTime,
@@ -470,10 +483,12 @@ export default {
 
           goalFinish[i].finishDescription[yearIndex].day =
             goalFinish[i].finishDescription[yearIndex].day + 1;
-        });
+        }); */
+        goalFinish[i].moreday =
+          goalFinish[i].moreday + goalFinish[i].dayTasks.length;
         goalFinish[i].dayTasks = [];
 
-        goalFinish[i].weekTasks.forEach((week: number) => {
+        /*  goalFinish[i].weekTasks.forEach((week: number) => {
           let yearTime = new Date(
             `${new Date(week).getFullYear}-1-1 00:00:00`,
           ).getTime();
@@ -558,11 +573,11 @@ export default {
             goalFinish[i].finishDescription[yearIndex].month + 1;
         });
         goalFinish[i].monthTasks = [];
-
+ */
         const successG: boolean = yield indexedDB.put('Goals', goalFinish[i]);
         console.log('index-init：刷新目标数据 - ' + successG);
 
-        // 将任务添加到history中
+        // 将记录添加到history中
         let HistoriesArr: Array<HistoryShow> = yield indexedDB.getData(
           'Histories',
           'timeId',

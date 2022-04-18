@@ -8,6 +8,7 @@ export default {
     timeId: 0,
     txt: '',
     interval: { type: 1, num: 0 },
+    intervalTimeType: true,
     data: null,
     goaldata: [],
   },
@@ -39,6 +40,7 @@ export default {
           txt: state.txt,
           tags: payload.tags,
           interval: state.interval,
+          intervalTimeType: state.intervalTimeType,
         };
         success = yield indexedDB.put(dbName, data);
       } else {
@@ -70,6 +72,7 @@ export default {
           txt: state.txt,
           tags: payload.tags,
           interval: state.interval,
+          intervalTimeType: true,
         };
         success = yield indexedDB.add(dbName, data);
       }

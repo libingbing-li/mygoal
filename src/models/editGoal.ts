@@ -9,7 +9,6 @@ export default {
     timeId: 0,
     title: '',
     description: '',
-    finishDescription: [],
     data: null,
   },
   reducers: {
@@ -36,10 +35,11 @@ export default {
           endTimeId: state.data.endTimeId,
           title: state.title,
           description: state.description,
-          finishDescription: state.data.finishDescription,
+          // finishDescription: state.data.finishDescription,
           dayTasks: state.data.dayTasks,
-          weekTasks: state.data.weekTasks,
-          monthTasks: state.data.monthTasks,
+          moreday: state.data.moreday,
+          // weekTasks: state.data.weekTasks,
+          // monthTasks: state.data.monthTasks,
         };
         success = yield indexedDB.put(dbName, data);
 
@@ -81,10 +81,11 @@ export default {
           endTimeId: 0,
           title: state.title,
           description: state.description,
-          finishDescription: [],
+          // finishDescription: [],
           dayTasks: dayTasks,
-          weekTasks: weekTasks,
-          monthTasks: monthTasks,
+          moreday: 0,
+          // weekTasks: weekTasks,
+          // monthTasks: monthTasks,
         };
         success = yield indexedDB.add(dbName, data);
       }
@@ -122,7 +123,6 @@ export default {
           timeId: payload.timeId,
           title: data.title,
           description: data.description,
-          finishDescription: data.finishDescription,
           data,
         },
       });

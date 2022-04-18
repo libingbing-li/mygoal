@@ -19,10 +19,8 @@ const goaldata = {
   endTimeId: 0,
   title: '',
   description: '',
-  finishDescription: [],
   dayTasks: [],
-  weekTasks: [],
-  monthTasks: [],
+  moreday: 0,
 };
 
 interface IProps {
@@ -30,9 +28,10 @@ interface IProps {
 }
 
 interface IState {
-  timeArray: Array<Array<number>>;
-  timeIndex: number;
-  timeStr: Array<string>;
+  // timeArray: Array<Array<number>>; //用于对比的day/week/monthTask数据候的数组， [[], [], []]
+  timeArray: Array<number>; //用于对比day的day数组
+  // timeIndex: number; //坐标，用于选择目标数据的day/week/monthTask
+  // timeStr: Array<string>;
   goalTimeShowWidth: number;
   goalTimeShowHeight: number;
   top: string;
@@ -47,9 +46,10 @@ class Satisfy extends React.Component<
   ModelSatisfy & IProps & { dispatch: any }
 > {
   state: IState = {
-    timeArray: [[], [], []],
-    timeIndex: 0,
-    timeStr: [' · 日', ' · 周', ' · 月'],
+    // timeArray: [[], [], []],
+    timeArray: [],
+    // timeIndex: 0,
+    // timeStr: [' · 日', ' · 周', ' · 月'],
     goalTimeShowWidth: 0,
     goalTimeShowHeight: 0,
     top: '0px',
@@ -64,6 +64,7 @@ class Satisfy extends React.Component<
     this.props.dispatch({
       type: 'satisfy/init',
     });
+    // 状态保存
     const scrollBox = document.querySelector('#satisfy');
     scrollBox?.addEventListener('scroll', (e: any) => {
       this.props.dispatch({
@@ -285,16 +286,12 @@ class Satisfy extends React.Component<
     });
     // 初始化横向时间表
     this.setTimeType('init');
-    this.goalTimeShow(
-      0,
-      nextProps.timeArray[this.state.timeIndex],
-      nextProps.goaldata,
-    );
+    this.goalTimeShow(0, nextProps.timeArray, nextProps.goaldata);
   };
 
   // cut切换横向时间轴类型（日/周/月） init初始化横向时间轴(日)
   setTimeType = (type: string) => {
-    let index = this.state.timeIndex;
+    /* let index = this.state.timeIndex;
     if (type === 'init') {
       index = 0;
     }
@@ -303,10 +300,10 @@ class Satisfy extends React.Component<
     }
     if (index === 3) {
       index = 0;
-    }
-    let width = 0;
+    } */
+    let width = 50 * 30; // 原本为0
     let height = 40 * this.props.goaldata.length;
-    switch (index) {
+    /* switch (index) {
       case 0:
         width = 50 * 30;
         break;
@@ -319,10 +316,10 @@ class Satisfy extends React.Component<
     }
     if (type !== 'init') {
       this.goalTimeShow(index, this.state.timeArray[index]);
-    }
+    } */
 
     this.setState({
-      timeIndex: index,
+      // timeIndex: index,
       goalTimeShowWidth: width,
       goalTimeShowHeight: height,
       left: '0px',
@@ -338,8 +335,8 @@ class Satisfy extends React.Component<
     let taskSatisfy: Array<number> = [];
     goaldata = goaldata === undefined ? this.state.goaldata : goaldata;
     goaldata.forEach((goal: GoalShow) => {
-      let arr: Array<number> = [];
-      switch (index) {
+      let arr: Array<number> = goal.dayTasks;
+      /* switch (index) {
         case 0:
           arr = goal.dayTasks;
           break;
@@ -349,7 +346,7 @@ class Satisfy extends React.Component<
         case 2:
           arr = goal.monthTasks;
           break;
-      }
+      } */
       if (arr.length === 0) {
         for (let i = 0; i < timeInterval.length; i++) {
           taskSatisfy.push(0);
@@ -403,17 +400,18 @@ class Satisfy extends React.Component<
   };
 
   showTimeInterval = (time: number, index: number) => {
-    switch (this.state.timeIndex) {
-      case 0:
-        return moment(time).format('MM.DD');
-      case 1:
-        if (index === 0) {
-          return '本周';
-        }
-        return '前' + index + '周';
-      case 2:
-        return moment(time).format('YYYY.MM');
-    }
+    return moment(time).format('MM.DD');
+    // switch (this.state.timeIndex) {
+    //   case 0:
+    //     return moment(time).format('MM.DD');
+    //   case 1:
+    //     if (index === 0) {
+    //       return '本周';
+    //     }
+    //     return '前' + index + '周';
+    //   case 2:
+    //     return moment(time).format('YYYY.MM');
+    // }
   };
 
   check = () => {
@@ -432,12 +430,11 @@ class Satisfy extends React.Component<
         <div className={styles.dateBar}>
           <div
             className={styles.year}
-            onClick={() => {
-              this.setTimeType('cut');
-            }}
+            // onClick={() => {
+            //   this.setTimeType('cut');
+            // }}
           >
-            {new Date().getFullYear() +
-              this.state.timeStr[this.state.timeIndex]}
+            完成记录
           </div>
           <div className={styles.timeIntervalBox}>
             <div
@@ -447,13 +444,11 @@ class Satisfy extends React.Component<
                 left: this.state.left,
               }}
             >
-              {this.state.timeArray[this.state.timeIndex].map(
-                (time: number, index: number) => {
-                  return (
-                    <div key={index}>{this.showTimeInterval(time, index)}</div>
-                  );
-                },
-              )}
+              {this.state.timeArray.map((time: number, index: number) => {
+                return (
+                  <div key={index}>{this.showTimeInterval(time, index)}</div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -492,9 +487,12 @@ class Satisfy extends React.Component<
                 width: this.state.goalTimeShowWidth + 'px',
               }}
             >
-              {this.state.taskSatisfy.map((done: number, index: number) => {
+              {this.state.taskSatisfy.map((done: number) => {
                 return (
-                  <div key={index} className={styles.goalTimeShow_box}>
+                  /* 
+                    不放key，因为基本没有变动，不需要key辅助diff
+                  */
+                  <div className={styles.goalTimeShow_box}>
                     <div
                       style={{
                         display: done === 0 ? 'none' : 'block',

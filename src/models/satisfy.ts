@@ -9,7 +9,7 @@ export default {
     goaldata: [],
     minTime: 0,
     maxTime: 0,
-    timeArray: [[], [], []],
+    timeArray: [],
   },
   reducers: {
     changeState(state: ModelSatisfy, { payload }: any) {
@@ -35,7 +35,7 @@ export default {
       }
 
       // 周
-      let week = new Date().getDay(); // 0-6, 0表示周天
+      /* let week = new Date().getDay(); // 0-6, 0表示周天
       if (week === 0) {
         week = 7;
       }
@@ -44,10 +44,10 @@ export default {
       for (let i = 24; i >= 1; i--) {
         weekArr.push(weekTime);
         weekTime = weekTime - 7 * 24 * 60 * 60 * 1000;
-      }
+      } */
 
       // 月
-      let year = new Date(nowTime).getFullYear();
+      /* let year = new Date(nowTime).getFullYear();
       let month = new Date(nowTime).getMonth() + 1;
       let monthArr: Array<number> = [];
       for (let i = 1; i <= 12; i++) {
@@ -57,10 +57,10 @@ export default {
           year = year - 1;
           month = 12;
         }
-      }
+      } */
 
-      let arr = [dayArr, weekArr, monthArr];
-      return { ...state, timeArray: arr };
+      // let arr = [dayArr, weekArr, monthArr];
+      return { ...state, timeArray: dayArr };
     },
   },
   effects: {

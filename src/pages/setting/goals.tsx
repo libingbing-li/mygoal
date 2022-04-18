@@ -63,26 +63,7 @@ class Goals extends React.Component<ModelSetting & { dispatch: any }> {
         <div className={style.description}>
           {data.description === '' ? '该目标无描述' : data.description}
         </div>
-        <div className={style.finish}>
-          {data.finishDescription.length === 0
-            ? '该目标无记录'
-            : data.finishDescription.map(
-                (data: {
-                  year: number;
-                  month: number;
-                  week: number;
-                  day: number;
-                }) => {
-                  return (
-                    <div key={data.year}>{`${new Date(
-                      data.year,
-                    ).getFullYear()}-累计在${data.day}天、${data.week}周、${
-                      data.month
-                    }月中为目标努力过！`}</div>
-                  );
-                },
-              )}
-        </div>
+        <div className={style.finish}>{`一共坚持了${data.moreday}天！`}</div>
       </div>
     );
   };

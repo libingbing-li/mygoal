@@ -58,33 +58,9 @@ class dataBox extends React.Component<
         </div>
         <div className={style.description}>{this.props.data.description}</div>
         <div className={style.finish}>
-          {/* {console.log(this.props.data)} */}
-          {this.props.data.finishDescription.length === 0 ? (
-            <div>{`${new Date().getFullYear()}-累计在${
-              this.props.data.dayTasks.length
-            }天、${this.props.data.weekTasks.length}周、${
-              this.props.data.monthTasks.length
-            }月中为目标努力过！`}</div>
-          ) : (
-            this.props.data.finishDescription.map(
-              (data: {
-                year: number;
-                month: number;
-                week: number;
-                day: number;
-              }) => {
-                return (
-                  <div key={data.year}>{`${new Date(
-                    data.year,
-                  ).getFullYear()}-累计在${
-                    data.day + this.props.data.dayTasks.length
-                  }天、${data.week + this.props.data.weekTasks.length}周、${
-                    data.month + this.props.data.monthTasks.length
-                  }月中为目标努力过！`}</div>
-                );
-              },
-            )
-          )}
+          {`目前为止一共坚持了${
+            this.props.data.dayTasks.length + this.props.data.moreday
+          }天！`}
         </div>
       </div>
     );
