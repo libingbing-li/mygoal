@@ -295,7 +295,6 @@ export default {
           case 2:
             // 周
             let weekNew = new Date(timeId).getDay(); //0-6 0周天
-            console.log(weekNew, 'weekNew');
             if (weekNew === 0) {
               weekNew = 7;
             }
@@ -313,7 +312,6 @@ export default {
           case 3:
             // 间隔
             intervalNum = Number(tasksFinish[i].interval.num[0]) + 1;
-            console.log(intervalNum);
             break;
         }
         // console.log(intervalNum)

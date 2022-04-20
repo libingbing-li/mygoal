@@ -26,7 +26,10 @@ export default {
     *init({ payload }: any, { put, call, select }: any) {
       const state: ModelTask = yield select((state: any) => state.task);
       let dbName = 'Tasks';
-      // 获取下一天的零点时间, 以处理昨天的完成任务
+      // 获取前缀
+      const prefixArr = JSON.parse(localStorage.getItem('prefix') || '[]');
+      console.log(prefixArr);
+      // 获取显示任务
       let nextTime =
         new Date(
           `${new Date().getFullYear()}-${

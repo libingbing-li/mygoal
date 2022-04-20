@@ -57,7 +57,10 @@ class Task extends React.Component<ModelTask & { dispatch: any }> {
   };
 
   showTask = (item: TaskShow) => {
-    const getIntervalStr = (interval: { type: number; num: Array<number> }) => {
+    const getIntervalStr = (
+      interval: { type: number; num: Array<number> },
+      intervalTimeType: boolean,
+    ) => {
       // console.log(interval);
       let str = '';
       switch (interval.type) {
@@ -74,6 +77,7 @@ class Task extends React.Component<ModelTask & { dispatch: any }> {
         case 3:
           str = 'day-' + interval.num[0];
       }
+      str += ` ${intervalTimeType ? '设定' : '完成'}`;
       return str;
     };
     return (
@@ -99,7 +103,7 @@ class Task extends React.Component<ModelTask & { dispatch: any }> {
             }}
           ></div>
           <div className={styles.taskShow_time}>
-            <span>{getIntervalStr(item.interval)}</span>
+            <span>{getIntervalStr(item.interval, item.intervalTimeType)}</span>
             {moment(item.timeId).format('YYYY-MM-DD')}
           </div>
           <div className={styles.taskShow_txt}>{item.txt}</div>

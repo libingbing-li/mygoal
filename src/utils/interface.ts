@@ -7,6 +7,13 @@ export interface TaskShow {
   interval: { type: number; num: Array<number> };
   intervalTimeType: boolean; // 按设定时间/完成时间决定循环, 默认true按设定时间
 }
+// 前缀 - 用于便捷地生成一个带固定前缀的任务
+export interface PrefixShow {
+  timeId: number;
+  endTimeId: number;
+  prefix: string;
+  tags: Array<GoalShow>;
+}
 // 目标
 export interface GoalShow {
   timeId: number;
@@ -55,6 +62,7 @@ export interface ModelEditTask {
   interval: { type: number; num: Array<number> }; //num: [0,1,2,3,4,5,6,7] 表每天都选中，第一个0为占位，没有任何功能
   intervalTimeType: boolean; // 按设定时间/完成时间决定循环
   goaldata: Array<GoalShow>;
+  isPrefix: boolean; //编辑的是任务还是前缀
 }
 
 export interface ModelHistoryShow {

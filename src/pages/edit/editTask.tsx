@@ -53,10 +53,9 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
   //在本处获取新的props并更新
   componentWillReceiveProps = (nextProps: ModelEditTask) => {
     if (this.state.goaldata.length === 0 || this.state.tags.length === 0) {
-      console.log(nextProps);
       this.setState({
         tags: nextProps.data ? nextProps.data.tags : [],
-        goaldata: nextProps.goaldata,
+        goaldata: nextProps.goaldata ? nextProps.goaldata : [],
       });
     }
   };
@@ -103,6 +102,10 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
     });
   };
 
+  setPrefix = () => {
+    this.changeModelState('isPrefix', !this.props.isPrefix);
+  };
+
   selectWeek = (num: number) => {
     let numArr = this.props.interval.num;
     if (numArr[num] === 0) {
@@ -114,6 +117,9 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
       type: 2,
       num: numArr,
     });
+  };
+  selectIntervalTimeType = () => {
+    this.changeModelState('intervalTimeType', !this.props.intervalTimeType);
   };
 
   changeModelState = (proName: string, data: any) => {
@@ -205,7 +211,38 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
               })}
             </div>
           </div>
+
           <div className={styles.interval}>
+            设定为
+            <span
+              style={{
+                marginLeft: '10px',
+                color: this.props.isPrefix ? '#fff' : '#000',
+                background: this.props.isPrefix ? '#000' : '#fff',
+              }}
+              onClick={this.setPrefix}
+            >
+              {this.props.isPrefix ? '前缀' : '任务'}
+            </span>
+          </div>
+          <div
+            className={styles.interval}
+            style={{ display: this.props.isPrefix ? 'none' : 'block' }}
+          >
+            <div className={styles.type}>
+              按照
+              <span
+                style={{
+                  marginLeft: '10px',
+                  color: !this.props.intervalTimeType ? '#fff' : '#000',
+                  background: !this.props.intervalTimeType ? '#000' : '#fff',
+                }}
+                onClick={this.selectIntervalTimeType}
+              >
+                {this.props.intervalTimeType ? '设定' : '完成'}
+              </span>
+              时间循环任务
+            </div>
             <div className={styles.type}>
               是否循环：
               <span
@@ -347,7 +384,7 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
                   onChange={(e) => {
                     this.changeModelState('interval', {
                       type: 3,
-                      num: [e.target.value],
+                      num: [e.target.value ? Number(e.target.value) : 0],
                     });
                   }}
                 />

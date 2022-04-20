@@ -1,6 +1,12 @@
+import { weekdays } from 'moment';
 import app from '../utils/app';
 import indexedDB from '../utils/indexedDB';
-import { ModelEditTask, TaskShow, GoalShow } from '../utils/interface';
+import {
+  ModelEditTask,
+  TaskShow,
+  GoalShow,
+  PrefixShow,
+} from '../utils/interface';
 
 export default {
   namespace: 'editTask',
@@ -11,6 +17,7 @@ export default {
     intervalTimeType: true,
     data: null,
     goaldata: [],
+    isPrefix: false,
   },
   reducers: {
     changeState(state: ModelEditTask, { payload }: any) {
@@ -25,10 +32,59 @@ export default {
       select: 从state中获取数据,属性名是命名空间的名字 const todos = yield select(state => state.todos);
       */
       const state: ModelEditTask = yield select((state: any) => state.editTask);
+      //任务空返回
       if (state.txt === '') {
         app.info('请输入任务内容');
         return;
       }
+
+      //判断是否是前缀 是保存至localStorage
+      if (state.isPrefix) {
+        let prefixArr: Array<PrefixShow> = JSON.parse(
+          localStorage.getItem('prefix') || '[]',
+        );
+        const dataP: PrefixShow = {
+          timeId: new Date().getTime(),
+          endTimeId: 0,
+          prefix: state.txt,
+          tags: payload.tags,
+        };
+        prefixArr.push(dataP);
+        localStorage.setItem('prefix', JSON.stringify(prefixArr));
+        yield put({
+          type: 'changeState',
+          payload: {
+            timeId: 0,
+            txt: '',
+            tags: [],
+            interval: { type: 1, num: 0 },
+            data: null,
+            intervalTimeType: true,
+            isPrefix: false,
+          },
+        });
+        payload.goBack();
+        yield put({
+          type: 'task/init',
+        });
+        return;
+      }
+
+      //设定循环间隔周不设定日期，默认为不循环
+      let interval = state.interval;
+      if (interval.type === 2) {
+        let change = true;
+        for (let i = 0; i < interval.num.length; i++) {
+          if (interval.num[i] !== 0) {
+            change = false;
+            break;
+          }
+        }
+        if (change) {
+          interval = { type: 1, num: [0] };
+        }
+      }
+
       let dbName = 'Tasks';
       let success: boolean = false;
       if (state.timeId) {
@@ -39,7 +95,7 @@ export default {
           endTimeId: state.data.endTimeId,
           txt: state.txt,
           tags: payload.tags,
-          interval: state.interval,
+          interval: interval,
           intervalTimeType: state.intervalTimeType,
         };
         success = yield indexedDB.put(dbName, data);
@@ -47,12 +103,12 @@ export default {
         console.log('进入添加');
         // 添加
         let timeId = new Date().getTime();
-        if (state.interval.type === 2) {
+        if (interval.type === 2) {
           let week = new Date().getDay(); //0-6 0是周天
           if (week === 0) {
             week = 7;
           }
-          if (state.interval.num[week] !== week) {
+          if (interval.num[week] !== week) {
             // 不是当前天 eg： 在周一建立的任务，并没有设置周一循环，那么就更改timeId到对应周数
             for (let i = 1; i < 7; i++) {
               week++;
@@ -71,8 +127,8 @@ export default {
           endTimeId: 0,
           txt: state.txt,
           tags: payload.tags,
-          interval: state.interval,
-          intervalTimeType: true,
+          interval: interval,
+          intervalTimeType: state.intervalTimeType,
         };
         success = yield indexedDB.add(dbName, data);
       }
@@ -85,6 +141,8 @@ export default {
             tags: [],
             interval: { type: 1, num: 0 },
             data: null,
+            intervalTimeType: true,
+            isPrefix: false,
           },
         });
         payload.goBack();
@@ -120,7 +178,6 @@ export default {
           }
         });
       }
-      console.log('model', data);
       yield put({
         type: 'changeState',
         payload: {
@@ -129,6 +186,7 @@ export default {
           interval: data.interval,
           data,
           goaldata,
+          intervalTimeType: data.intervalTimeType,
         },
       });
     },
