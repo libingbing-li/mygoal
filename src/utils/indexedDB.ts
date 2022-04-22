@@ -4,7 +4,7 @@ import app from './app';
 // 实例的存储
 const list = [
   // 目标
-  ['Goals', ['timeId', 'endTimeId', 'title', 'description', 'dayTasks']],
+  ['Goals', ['timeId', 'endTimeId', 'title', 'dayTasks']],
   // 任务
   ['Tasks', ['timeId', 'endTimeId', 'txt']],
   // 历史
@@ -26,7 +26,7 @@ class IndexedDB {
     const _this = this;
     const promise = new Promise((resolve, reject) => {
       // 在此新建数据库并创建好所有需要的表(对象仓库)和数据结构
-      let request = window.indexedDB.open('MyGoal'); //一个打开数据库的请求
+      let request = window.indexedDB.open('MyGoal', 1); //一个打开数据库的请求
       request.onupgradeneeded = (e: any) => {
         this.database = e.target.result;
         // 在此进行数据结构的构造-存放Note日记的表

@@ -18,6 +18,7 @@ export default {
     data: null,
     goaldata: [],
     isPrefix: false,
+    dataP: null,
   },
   reducers: {
     changeState(state: ModelEditTask, { payload }: any) {
@@ -56,7 +57,6 @@ export default {
           payload: {
             timeId: 0,
             txt: '',
-            tags: [],
             interval: { type: 1, num: 0 },
             data: null,
             intervalTimeType: true,
@@ -138,7 +138,6 @@ export default {
           payload: {
             timeId: 0,
             txt: '',
-            tags: [],
             interval: { type: 1, num: 0 },
             data: null,
             intervalTimeType: true,
@@ -237,5 +236,42 @@ export default {
         },
       });
     },
+    // prefix
+    *getPrefix({ payload }: any, { put, call, select }: any) {
+      const state: ModelEditTask = yield select((state: any) => state.editTask);
+      const prefixData = JSON.parse(localStorage.getItem('prefix') || '[]');
+      const dataP = prefixData.find((prefix: PrefixShow) => {
+        return prefix.timeId == payload.timeId;
+      });
+      let goaldata: Array<GoalShow> = yield indexedDB.getData(
+        'Goals',
+        'endTimeId',
+        0,
+      );
+      goaldata = goaldata || [];
+      if (dataP) {
+        dataP.tags.forEach((tag: GoalShow) => {
+          for (let i = 0; i < goaldata.length; i++) {
+            if (goaldata[i].timeId === tag.timeId) {
+              goaldata.splice(i, 1);
+              break;
+            }
+          }
+        });
+      }
+      if (dataP) {
+        yield put({
+          type: 'changeState',
+          payload: {
+            timeId: 0,
+            txt: dataP.prefix,
+            dataP,
+            isPrefix: true,
+            goaldata,
+          },
+        });
+      }
+    },
+    *editPrefix({ payload }: any, { put, call, select }: any) {},
   },
 };

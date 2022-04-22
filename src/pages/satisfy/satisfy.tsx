@@ -21,6 +21,7 @@ const goaldata = {
   description: '',
   dayTasks: [],
   moreday: 0,
+  endDone: false,
 };
 
 interface IProps {
@@ -487,12 +488,9 @@ class Satisfy extends React.Component<
                 width: this.state.goalTimeShowWidth + 'px',
               }}
             >
-              {this.state.taskSatisfy.map((done: number) => {
+              {this.state.taskSatisfy.map((done: number, index: number) => {
                 return (
-                  /* 
-                    不放key，因为基本没有变动，不需要key辅助diff
-                  */
-                  <div className={styles.goalTimeShow_box}>
+                  <div key={index} className={styles.goalTimeShow_box}>
                     <div
                       style={{
                         display: done === 0 ? 'none' : 'block',

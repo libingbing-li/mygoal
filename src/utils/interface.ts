@@ -18,6 +18,7 @@ export interface PrefixShow {
 export interface GoalShow {
   timeId: number;
   endTimeId: number;
+  endDone: boolean; //一个标记，当目标完成并被index处理过为true
   title: string;
   description: string;
   moreday: number; //默认0，目标未结束前记录dayTasks溢出的数量，结束后清空dayTask，记录全部数量
@@ -63,6 +64,7 @@ export interface ModelEditTask {
   intervalTimeType: boolean; // 按设定时间/完成时间决定循环
   goaldata: Array<GoalShow>;
   isPrefix: boolean; //编辑的是任务还是前缀
+  dataP: PrefixShow; //前缀数据
 }
 
 export interface ModelHistoryShow {
@@ -73,6 +75,7 @@ export interface ModelHistoryShow {
 }
 export interface ModelTask {
   taskdata: Array<TaskShow>;
+  prefixData: Array<PrefixShow>;
   nextTaskData: Array<TaskShow>;
   scrollTop: number;
 }

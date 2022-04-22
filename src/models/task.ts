@@ -8,6 +8,7 @@ export default {
     scrollTop: 0,
     taskdata: [],
     nextTaskData: [],
+    prefixData: [],
   },
   reducers: {
     changeState(state: ModelTask, { payload }: any) {
@@ -27,8 +28,7 @@ export default {
       const state: ModelTask = yield select((state: any) => state.task);
       let dbName = 'Tasks';
       // 获取前缀
-      const prefixArr = JSON.parse(localStorage.getItem('prefix') || '[]');
-      console.log(prefixArr);
+      const prefixData = JSON.parse(localStorage.getItem('prefix') || '[]');
       // 获取显示任务
       let nextTime =
         new Date(
@@ -65,6 +65,7 @@ export default {
         payload: {
           taskdata: taskdata ? taskdata : [],
           nextTaskData,
+          prefixData,
         },
       });
     },

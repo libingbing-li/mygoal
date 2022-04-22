@@ -37,6 +37,18 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
     this.props.dispatch({
       type: 'editTask/init',
     });
+    // 判定是否前缀编辑
+    const prefix = history.location.query?.prefix;
+    if (prefix) {
+      this.props.dispatch({
+        type: 'editTask/getPrefix',
+        payload: {
+          timeId: prefix,
+        },
+      });
+      return;
+    }
+    // 判定是否任务编辑
     const timeId = history.location.query?.timeId;
     if (!(timeId === 'null')) {
       // 详情查看
@@ -44,7 +56,7 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
       this.props.dispatch({
         type: 'editTask/getData',
         payload: {
-          timeId: history.location.query?.timeId,
+          timeId,
         },
       });
     }
@@ -52,6 +64,15 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
 
   //在本处获取新的props并更新
   componentWillReceiveProps = (nextProps: ModelEditTask) => {
+    // 前缀
+    if (history.location.query?.prefix) {
+      this.setState({
+        tags: nextProps.dataP ? nextProps.dataP.tags : [],
+        goaldata: nextProps.goaldata ? nextProps.goaldata : [],
+      });
+      return;
+    }
+    // 任务
     if (this.state.goaldata.length === 0 || this.state.tags.length === 0) {
       this.setState({
         tags: nextProps.data ? nextProps.data.tags : [],
@@ -211,8 +232,13 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
               })}
             </div>
           </div>
-
-          <div className={styles.interval}>
+          <div
+            className={styles.interval}
+            style={{
+              display:
+                history.location.query?.timeId !== 'null' ? 'none' : 'block',
+            }}
+          >
             设定为
             <span
               style={{

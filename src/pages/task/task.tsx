@@ -4,7 +4,12 @@ import moment from 'moment';
 import { connect, EffectsCommandMap, Model } from 'dva';
 import { DatePicker } from 'antd';
 import { CheckOutlined } from '@ant-design/icons';
-import { GoalShow, ModelTask, TaskShow } from '../../utils/interface';
+import {
+  GoalShow,
+  ModelTask,
+  TaskShow,
+  PrefixShow,
+} from '../../utils/interface';
 import indexedDB from '../../utils/indexedDB';
 import commonStyle from '@/common-styles/common.less';
 import styles from './styles/task.less';
@@ -117,9 +122,25 @@ class Task extends React.Component<ModelTask & { dispatch: any }> {
     );
   };
 
+  prefixToTask = (timeId: number) => {
+    history.push(`/editTask?prefix=${timeId}`);
+  };
+
   render() {
     return (
       <div className={styles.task} id="task">
+        <div className={styles.prefixDiv}>
+          {this.props.prefixData.map((item: PrefixShow) => {
+            return (
+              <span
+                onClick={() => this.prefixToTask(item.timeId)}
+                key={item.timeId}
+              >
+                {item.prefix}
+              </span>
+            );
+          })}
+        </div>
         {this.props.taskdata.length === 0 ? (
           <div className={styles.nothing}>任务已经全部完成啦!</div>
         ) : (

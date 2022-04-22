@@ -195,7 +195,6 @@ export default {
           // console.log(goal);
 
           const successG: boolean = yield indexedDB.put('Goals', goal);
-          console.log('index-init：刷新目标数据 - ' + successG);
         }
 
         // 将任务添加到history中
@@ -280,7 +279,6 @@ export default {
             'Histories',
             HistoriesArr[historyIndex],
           );
-          console.log('index-init：刷新历史数据 - ' + successH);
         }
 
         // 根据任务的循环设定新建下一个任务
@@ -399,7 +397,8 @@ export default {
           }
           indexedDB.put('Goals', goal);
         }
-        if (goal.endTimeId !== 0) goalFinish.push(goal);
+        if (goal.endTimeId !== 0 && goal.endDone === false)
+          goalFinish.push(goal);
       });
 
       /*
@@ -572,8 +571,8 @@ export default {
         });
         goalFinish[i].monthTasks = [];
  */
+        goalFinish[i].endDone = true;
         const successG: boolean = yield indexedDB.put('Goals', goalFinish[i]);
-        console.log('index-init：刷新目标数据 - ' + successG);
 
         // 将记录添加到history中
         let HistoriesArr: Array<HistoryShow> = yield indexedDB.getData(
@@ -638,7 +637,6 @@ export default {
             'Histories',
             HistoriesArr[historyIndex],
           );
-          console.log('index-init：刷新历史数据 - ' + successH);
         }
       }
 

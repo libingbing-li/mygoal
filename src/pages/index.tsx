@@ -91,7 +91,6 @@ class Index extends React.Component<ModelIndex & { dispatch: any }> {
   slideLeft = () => {
     // 关闭goal数据框
     this.dataBoxClose();
-    console.log('slideLeft');
     if (this.state.nowPage == 1) {
       return;
     }
@@ -132,7 +131,6 @@ class Index extends React.Component<ModelIndex & { dispatch: any }> {
   slideRight = () => {
     // 关闭goal数据框
     this.dataBoxClose();
-    console.log('slideRight');
     if (this.state.nowPage == this.state.pageNum) {
       return;
     }
@@ -187,7 +185,6 @@ class Index extends React.Component<ModelIndex & { dispatch: any }> {
 
   // 侧边栏
   sidebarShow = () => {
-    console.log('sidebarShow');
     const sidebar: any = document.querySelector(`#sidebar`);
     const page: any = document.querySelector(
       `#index-page${this.state.nowPage}`,
@@ -208,7 +205,6 @@ class Index extends React.Component<ModelIndex & { dispatch: any }> {
   };
   // 关闭侧边栏
   sidebarClose = () => {
-    console.log('sidebarClose');
     const sidebar: any = document.querySelector(`#sidebar`);
     const page: any = document.querySelector(
       `#index-page${this.state.nowPage}`,

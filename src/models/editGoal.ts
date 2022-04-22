@@ -38,6 +38,7 @@ export default {
           // finishDescription: state.data.finishDescription,
           dayTasks: state.data.dayTasks,
           moreday: state.data.moreday,
+          endDone: false,
           // weekTasks: state.data.weekTasks,
           // monthTasks: state.data.monthTasks,
         };
@@ -79,6 +80,7 @@ export default {
         let data: GoalShow = {
           timeId: new Date().getTime(),
           endTimeId: 0,
+          endDone: false,
           title: state.title,
           description: state.description,
           // finishDescription: [],
