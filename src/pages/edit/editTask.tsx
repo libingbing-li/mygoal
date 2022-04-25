@@ -13,7 +13,7 @@ import {
   DeleteOutlined,
   EllipsisOutlined,
 } from '@ant-design/icons';
-import { GoalShow, ModelEditTask } from '../../utils/interface';
+import { GoalShow, ModelEditTask, PrefixShow } from '../../utils/interface';
 import commonStyle from '@/common-styles/common.less';
 import Confirm from '@/common-components/Confirm';
 import styles from './styles/edit.less';
@@ -23,6 +23,7 @@ interface IState {
   tags: Array<GoalShow>;
   goaldata: Array<GoalShow>;
   confirmShow: boolean;
+  prefixConfirmShow: boolean;
 }
 
 // 该页面用于编辑展示日记
@@ -31,6 +32,7 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
     tags: [],
     goaldata: [],
     confirmShow: false,
+    prefixConfirmShow: false,
   };
 
   componentDidMount() {
@@ -92,6 +94,30 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
       },
     });
   };
+  savePTask = () => {
+    this.props.dispatch({
+      type: 'editTask/savePrefixTask',
+      payload: {
+        tags: this.state.tags,
+        goBack: history.goBack,
+      },
+    });
+  };
+  savePrefix = () => {
+    const prefixData: Array<PrefixShow> = JSON.parse(
+      localStorage.getItem('prefix') || '[]',
+    );
+    for (let i = 0; i < prefixData.length; i++) {
+      if (prefixData[i].timeId === Number(history.location.query?.prefix)) {
+        prefixData[i].prefix = this.props.txt.replace(/[【】]/g, '');
+        prefixData[i].tags = this.state.tags;
+        break;
+      }
+    }
+    localStorage.setItem('prefix', JSON.stringify(prefixData));
+    this.prefixConfirmShow();
+    history.goBack();
+  };
 
   remove = () => {
     this.props.dispatch({
@@ -100,6 +126,20 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
         goBack: history.goBack,
       },
     });
+  };
+  removePrefix = () => {
+    const prefixData: Array<PrefixShow> = JSON.parse(
+      localStorage.getItem('prefix') || '[]',
+    );
+    for (let i = 0; i < prefixData.length; i++) {
+      if (prefixData[i].timeId === Number(history.location.query?.prefix)) {
+        prefixData.splice(i, 1);
+        break;
+      }
+    }
+    localStorage.setItem('prefix', JSON.stringify(prefixData));
+    this.prefixConfirmShow();
+    history.goBack();
   };
 
   addTag = (goal: GoalShow, index: number) => {
@@ -157,6 +197,12 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
       confirmShow: !preState.confirmShow,
     }));
   };
+  prefixConfirmShow = () => {
+    this.setState((preState: IState) => ({
+      confirmShow: false,
+      prefixConfirmShow: !preState.prefixConfirmShow,
+    }));
+  };
 
   // 后退清空数据
   back = () => {
@@ -177,7 +223,7 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
     return (
       <div className={styles.edit_task}>
         <Confirm
-          id="editGoalMore"
+          id="editTaskMore"
           txt="请选择操作"
           confirm={this.save}
           confirmStr="保存"
@@ -186,7 +232,39 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
           closeIcon={true}
           close={this.confirmShow}
           style={{
-            display: this.state.confirmShow ? 'flex' : 'none',
+            display:
+              this.state.confirmShow && !history.location.query?.prefix
+                ? 'flex'
+                : 'none',
+          }}
+        ></Confirm>
+        <Confirm
+          id="editTaskPrefix"
+          txt="请选择操作"
+          confirm={this.savePTask}
+          confirmStr="生成任务"
+          cancel={this.prefixConfirmShow}
+          cancelStr="编辑前缀"
+          closeIcon={true}
+          close={this.confirmShow}
+          style={{
+            display:
+              this.state.confirmShow && history.location.query?.prefix
+                ? 'flex'
+                : 'none',
+          }}
+        ></Confirm>
+        <Confirm
+          id="editTaskPrefix"
+          txt="请选择操作"
+          confirm={this.savePrefix}
+          confirmStr="保存前缀"
+          cancel={this.removePrefix}
+          cancelStr="删除前缀"
+          closeIcon={true}
+          close={this.confirmShow}
+          style={{
+            display: this.state.prefixConfirmShow ? 'flex' : 'none',
           }}
         ></Confirm>
         <div className={styles.title}>

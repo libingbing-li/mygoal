@@ -4,7 +4,7 @@ import moment from 'moment';
 class Application {
   // 提示
   info = (str: string) => {
-    Toast.info(str);
+    Toast.info(str, 0.7);
   };
 
   // 转换时间格式

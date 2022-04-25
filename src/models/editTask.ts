@@ -13,7 +13,7 @@ export default {
   state: {
     timeId: 0,
     txt: '',
-    interval: { type: 1, num: 0 },
+    interval: { type: 1, num: [0] },
     intervalTimeType: true,
     data: null,
     goaldata: [],
@@ -239,7 +239,9 @@ export default {
     // prefix
     *getPrefix({ payload }: any, { put, call, select }: any) {
       const state: ModelEditTask = yield select((state: any) => state.editTask);
-      const prefixData = JSON.parse(localStorage.getItem('prefix') || '[]');
+      const prefixData: Array<PrefixShow> = JSON.parse(
+        localStorage.getItem('prefix') || '[]',
+      );
       const dataP = prefixData.find((prefix: PrefixShow) => {
         return prefix.timeId == payload.timeId;
       });
@@ -264,7 +266,7 @@ export default {
           type: 'changeState',
           payload: {
             timeId: 0,
-            txt: dataP.prefix,
+            txt: `【${dataP.prefix}】`,
             dataP,
             isPrefix: true,
             goaldata,
@@ -272,6 +274,40 @@ export default {
         });
       }
     },
-    *editPrefix({ payload }: any, { put, call, select }: any) {},
+    *savePrefixTask({ payload }: any, { put, call, select }: any) {
+      console.log('添加前缀一次性任务');
+      const state: ModelEditTask = yield select((state: any) => state.editTask);
+      // 添加
+      let timeId = new Date().getTime();
+      let data: TaskShow = {
+        timeId: timeId,
+        endTimeId: 0,
+        txt: state.txt,
+        tags: payload.tags,
+        interval: { type: 1, num: [0] },
+        intervalTimeType: true,
+      };
+      let dbName = 'Tasks';
+      let success: boolean = yield indexedDB.add(dbName, data);
+      if (success) {
+        yield put({
+          type: 'changeState',
+          payload: {
+            timeId: 0,
+            txt: '',
+            interval: { type: 1, num: [0] },
+            data: null,
+            intervalTimeType: true,
+            isPrefix: false,
+          },
+        });
+        payload.goBack();
+        yield put({
+          type: 'task/init',
+        });
+      } else {
+        app.info('保存失败');
+      }
+    },
   },
 };
