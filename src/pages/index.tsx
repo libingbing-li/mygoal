@@ -220,7 +220,7 @@ class Index extends React.Component<ModelIndex & { dispatch: any }> {
 
   // 点击页面
   pageClick = () => {
-    console.log('pageClick');
+    // console.log('pageClick');
     // Toast.clear(); //清除可能存在的轻提示
     // 当侧边栏存在，点击关闭
     const sidebar: any = document.querySelector(`#sidebar`);

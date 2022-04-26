@@ -21,12 +21,14 @@ import app from '@/utils/app';
 
 interface IState {
   confirmShow: boolean;
+  removeComfirmShow: boolean;
 }
 
 // 该页面用于编辑展示日记
 class EditGoal extends React.Component<ModelEditGoal & { dispatch: any }> {
   state: IState = {
     confirmShow: false,
+    removeComfirmShow: false,
   };
 
   componentDidMount() {
@@ -95,6 +97,12 @@ class EditGoal extends React.Component<ModelEditGoal & { dispatch: any }> {
       confirmShow: !preState.confirmShow,
     }));
   };
+  removeComfirmShow = () => {
+    this.setState((preState: IState) => ({
+      confirmShow: false,
+      removeComfirmShow: !preState.removeComfirmShow,
+    }));
+  };
 
   render() {
     return (
@@ -104,12 +112,25 @@ class EditGoal extends React.Component<ModelEditGoal & { dispatch: any }> {
           txt="请选择操作"
           confirm={this.save}
           confirmStr="保存"
-          cancel={this.remove}
+          cancel={this.removeComfirmShow}
           cancelStr="删除"
           closeIcon={true}
           close={this.confirmShow}
           style={{
             display: this.state.confirmShow ? 'flex' : 'none',
+          }}
+        ></Confirm>
+        <Confirm
+          id="editGoalMore"
+          txt="是否确认删除目标"
+          confirm={this.remove}
+          confirmStr="删除"
+          cancel={this.removeComfirmShow}
+          cancelStr="取消"
+          closeIcon={true}
+          close={this.confirmShow}
+          style={{
+            display: this.state.removeComfirmShow ? 'flex' : 'none',
           }}
         ></Confirm>
         <div className={styles.title}>

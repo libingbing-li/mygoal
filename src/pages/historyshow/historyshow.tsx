@@ -13,6 +13,7 @@ import './styles/antd.css';
 
 interface IState {
   historydata: Array<HistoryShow>;
+  reverse: boolean;
 }
 // 展示日记，可以点击进入详情
 class HistoryShowList extends React.Component<
@@ -20,6 +21,7 @@ class HistoryShowList extends React.Component<
 > {
   state: IState = {
     historydata: this.props.historydata,
+    reverse: false,
   };
 
   componentDidMount = () => {
@@ -93,19 +95,38 @@ class HistoryShowList extends React.Component<
     console.log('historyTime', {
       minTime: new Date(`${year}-${month}-1 00:00:00`).getTime(),
       maxTime: new Date(`${yearMax}-${monthMax}-1 00:00:00`).getTime() - 1,
+      reverse: this.state.reverse,
     });
     this.props.dispatch({
       type: 'historyshow/openDB',
       payload: {
         minTime: new Date(`${year}-${month}-1 00:00:00`).getTime(),
         maxTime: new Date(`${yearMax}-${monthMax}-1 00:00:00`).getTime() - 1,
+        reverse: this.state.reverse,
       },
+    });
+  };
+
+  reverse = () => {
+    this.props.dispatch({
+      type: 'changeState',
+      payload: {
+        historydata: this.state.historydata.reverse(),
+      },
+    });
+    this.setState((preState: IState) => {
+      return {
+        reverse: !preState.reverse,
+      };
     });
   };
 
   render() {
     return (
       <div className={styles.historyshow} id="historyshow">
+        <div className={styles.reverse} onClick={this.reverse}>
+          {this.state.reverse ? '逆序' : '顺序'}
+        </div>
         <DateSelect
           id="goals"
           type={1}
@@ -113,7 +134,7 @@ class HistoryShowList extends React.Component<
           style={{
             width: '80vw',
             margin: '10px 10vw',
-            flex: '0 0 30px',
+            flex: '0 0 auto',
           }}
           returnTime={(year: number, month: number, date: number) =>
             this.getTime(year, month, date)

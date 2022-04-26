@@ -125,14 +125,14 @@ class IndexedDB {
     return promise;
   };
 
-  // 获取筛选/全部数据 数据库名称， 索引？ 精确搜索key？ 范围上下ke？ prev倒序
+  // 获取筛选/全部数据 数据库名称， 索引？ 精确搜索key？ 范围上下ke？ reverse倒序
   getData = (
     name: string,
     indexName?: string,
     key?: any,
     minKey?: any,
     maxKey?: any,
-    prev?: any,
+    reverse?: any,
   ) => {
     const _this = this;
     const promise = new Promise((resolve, reject) => {
@@ -159,7 +159,7 @@ class IndexedDB {
         request.onsuccess = (e: any) => {
           length = e.target.result;
           if (length) {
-            let request = objectStoreIndex?.openCursor(keyRangeValue, prev);
+            let request = objectStoreIndex?.openCursor(keyRangeValue, reverse);
             let data: any = [];
             let i = 0;
             if (request) {
