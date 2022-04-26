@@ -58,7 +58,8 @@ class AllData extends React.Component<ModelSetting & { dispatch: any }> {
   };
 
   getTime = (year: number, month: number, date: number) => {
-    // console.log(year, month, date);
+    // 获取一个月的时间区间
+    /* console.log(year, month, date);
     let yearMax = 0;
     let monthMax = 0;
     if (month + 1 === 13) {
@@ -67,12 +68,16 @@ class AllData extends React.Component<ModelSetting & { dispatch: any }> {
     } else {
       yearMax = year;
       monthMax = month + 1;
-    }
+    } */
+    console.log({
+      minTime: new Date(`${year}-1-1 00:00:00`),
+      maxTime: new Date(`${year + 1}-1-1 00:00:00`),
+    });
     this.props.dispatch({
       type: 'setting/changeState',
       payload: {
-        minTime: new Date(`${year}-${month}-1 00:00:00`).getTime(),
-        maxTime: new Date(`${yearMax}-${monthMax}-1 00:00:00`).getTime(),
+        minTime: new Date(`${year}-1-1 00:00:00`).getTime(),
+        maxTime: new Date(`${year + 1}-1-1 00:00:00`).getTime(),
       },
     });
   };
@@ -96,7 +101,7 @@ class AllData extends React.Component<ModelSetting & { dispatch: any }> {
         </div>
         <DateSelect
           id="goals"
-          type={1}
+          type={3}
           style={{
             width: '80vw',
             margin: '10px 10vw',

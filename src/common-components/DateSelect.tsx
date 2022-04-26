@@ -16,7 +16,7 @@ import style from './styles/DateSelect.less';
 import { months } from 'moment';
 
 const defaultProps = {
-  type: 1, //type 1月 2日期
+  type: 1, //type 1月 2日期  3年
   time: 0,
 };
 
@@ -126,6 +126,12 @@ class DateSelect extends React.Component<IProps & typeof defaultProps> {
         selectBR = `repeat(${parseInt(String(arr.length / 7))}, 1fr)`;
         day = date;
         break;
+      case 3:
+        str1 = year + '';
+        str2 = year + '';
+        arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+        day = month;
+        break;
     }
     this.setState({
       showStr: str1,
@@ -171,6 +177,9 @@ class DateSelect extends React.Component<IProps & typeof defaultProps> {
           date = date - 1;
         }
         break;
+      case 3:
+        //上一年
+        year--;
     }
     this.getStr(year, month, date);
   };
@@ -205,6 +214,9 @@ class DateSelect extends React.Component<IProps & typeof defaultProps> {
           date = date + 1;
         }
         break;
+      case 3:
+        // 下一年
+        year++;
     }
     this.getStr(year, month, date);
   };
@@ -264,6 +276,7 @@ class DateSelect extends React.Component<IProps & typeof defaultProps> {
     this.getStr(year, month, date);
   };
   select = () => {
+    if (this.props.type === 3) return;
     const box: any = document.querySelector(`#dateselect-${this.props.id}`);
     if (box) {
       if (box.style.height === '30px') {

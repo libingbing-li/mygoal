@@ -54,9 +54,9 @@ export default {
           for (let i = 0; i < task.tags.length; i++) {
             if (task.tags[i].timeId === Number(state.timeId)) {
               task.tags.splice(i, 1, data);
+              newTasks.push(task);
               break;
             }
-            newTasks.push(task);
           }
         });
         for (let i = 0; i < newTasks.length; i++) {
