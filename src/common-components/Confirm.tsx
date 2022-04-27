@@ -8,28 +8,28 @@ import { CloseOutlined } from '@ant-design/icons';
 import style from './styles/Confirm.less';
 import { months } from 'moment';
 
-const defaultProps = {
-  confirm: () => {
+class defaultProps {
+  confirm: () => void = () => {
     console.log('confirm');
-  },
-  cancel: () => {
+  };
+  cancel: () => void = () => {
     console.log('cancel');
-  },
-  confirmStr: '确认',
-  cancelStr: '取消',
-  txt: '是否进行操作',
-  closeIcon: false,
-  close: () => {},
-};
+  };
+  confirmStr: string = '确认';
+  cancelStr: string = '取消';
+  txt: string = '是否进行操作';
+  closeIcon: boolean = false;
+  close: () => void = () => {};
+}
 type IProps = {
   id: string;
   style?: any;
-} & Partial<typeof defaultProps>; //等同于上述注释的部分
+} & defaultProps; //class defaultProps作为接口使用
 
 interface IState {}
 
-class Confirm extends React.Component<IProps & typeof defaultProps> {
-  static defaultProps = defaultProps;
+class Confirm extends React.Component<IProps> {
+  static defaultProps = new defaultProps(); //设置defaultProps默认值
   state: IState = {};
   componentDidMount = () => {};
 

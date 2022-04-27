@@ -56,7 +56,6 @@ export default {
         undefined,
         minTime,
         maxTime,
-        payload.reverse,
       );
       yield put({
         type: 'changeState',

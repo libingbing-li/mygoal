@@ -43,7 +43,7 @@ type IProps = {
   id: string;
   style: any;
   returnTime: (year: number, month: number, date: number) => void;
-} & Partial<typeof defaultProps>; //等同于上述注释的部分
+} & typeof defaultProps; //等同于上述注释的部分
 
 interface IState {
   showStr: string;
@@ -57,7 +57,7 @@ interface IState {
   day: number;
 }
 
-class DateSelect extends React.Component<IProps & typeof defaultProps> {
+class DateSelect extends React.Component<IProps> {
   static defaultProps = defaultProps;
   state: IState = {
     showStr: '',
@@ -327,7 +327,7 @@ class DateSelect extends React.Component<IProps & typeof defaultProps> {
             {this.state.selectArray.map((day: number, index: number) => {
               return (
                 <div
-                  key={index}
+                  key={day}
                   style={{
                     opacity: day === 0 ? 0 : 1,
                     background: this.state.day === day ? '#bbb' : '#eee',

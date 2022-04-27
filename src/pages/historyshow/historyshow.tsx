@@ -54,12 +54,12 @@ class HistoryShowList extends React.Component<
         </div>
         <div className={styles.historyShow_data}>
           {item.tasks.map((task: string, index: number) => {
-            return <div key={index}>{task}</div>;
+            return <div key={task}>{task}</div>;
           })}
         </div>
         <div className={styles.historyShow_tags}>
           {item.goals.map((tag: string, index: number) => {
-            return <span key={index}>{tag}</span>;
+            return <span key={tag}>{tag}</span>;
           })}
         </div>
       </div>
@@ -95,14 +95,12 @@ class HistoryShowList extends React.Component<
     console.log('historyTime', {
       minTime: new Date(`${year}-${month}-1 00:00:00`).getTime(),
       maxTime: new Date(`${yearMax}-${monthMax}-1 00:00:00`).getTime() - 1,
-      reverse: this.state.reverse,
     });
     this.props.dispatch({
       type: 'historyshow/openDB',
       payload: {
         minTime: new Date(`${year}-${month}-1 00:00:00`).getTime(),
         maxTime: new Date(`${yearMax}-${monthMax}-1 00:00:00`).getTime() - 1,
-        reverse: this.state.reverse,
       },
     });
   };

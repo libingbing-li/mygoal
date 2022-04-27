@@ -132,7 +132,6 @@ class IndexedDB {
     key?: any,
     minKey?: any,
     maxKey?: any,
-    reverse?: any,
   ) => {
     const _this = this;
     const promise = new Promise((resolve, reject) => {
@@ -159,7 +158,7 @@ class IndexedDB {
         request.onsuccess = (e: any) => {
           length = e.target.result;
           if (length) {
-            let request = objectStoreIndex?.openCursor(keyRangeValue, reverse);
+            let request = objectStoreIndex?.openCursor(keyRangeValue);
             let data: any = [];
             let i = 0;
             if (request) {

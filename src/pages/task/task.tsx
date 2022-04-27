@@ -115,7 +115,7 @@ class Task extends React.Component<ModelTask & { dispatch: any }> {
         </div>
         <div className={styles.taskShow_tags}>
           {item.tags.map((tag: GoalShow, index: number) => {
-            return <span key={index}>{tag.title}</span>;
+            return <span key={tag.timeId}>{tag.title}</span>;
           })}
         </div>
       </div>
