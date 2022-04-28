@@ -1,10 +1,11 @@
 import app from './app';
+import { GoalShow, HistoryShow, TaskShow } from './interface';
 // 使用indexedDB数据库保存数据,全部为异步操作,所以需要返回promise以便进行后续操作(类似发请求,本处就为app的后台)
 
 // 实例的存储
 const list = [
   // 目标
-  ['Goals', ['timeId', 'endTimeId', 'title', 'dayTasks']],
+  ['Goals', ['timeId', 'endTimeId', 'title', 'dayTasks', 'moreday']],
   // 任务
   ['Tasks', ['timeId', 'endTimeId', 'txt']],
   // 历史
@@ -270,8 +271,41 @@ class IndexedDB {
   // 获取数据并覆盖数据库
   setAllData = (data: any, minTime: number, maxTime: number) => {
     const _this = this;
+    /* // 转换数据格式
+    const convertAllDate = (data: any): any => {
+      const nameList = ['Goals', 'Tasks', 'Histories'];
+      let goals: Array<GoalShow> = [];
+      let tasks: Array<TaskShow> = [];
+
+      data['Goals'].forEach((item: any, index: number) => {
+        let moreday = 0;
+        item.finishDescription.forEach((item: any) => {
+          moreday = moreday + item.day;
+        })
+        goals.push({
+          timeId: item.timeId,
+          endTimeId: item.endTimeId,
+          endDone: item.endTimeId === 0 ? false : true,
+          title: item.title,
+          description: item.description,
+          moreday: moreday,
+          dayTasks: item.dayTasks,
+        })
+      });
+      data['Goals'] = goals;
+
+      data['Tasks'].forEach((item: any, index: number) => {
+        tasks.push({
+          ...item,
+          intervalTimeType: true,
+        })
+      });
+      data['Tasks'] = tasks;
+
+      return data;
+    }
+    data = convertAllDate(data); */
     const promise = new Promise((resolve, reject) => {
-      // console.log(data);
       const nameList = ['Goals', 'Tasks', 'Histories'];
       const set = () => {
         nameList.forEach((name: string) => {
@@ -296,6 +330,7 @@ class IndexedDB {
       });
       set();
     });
+
     return promise;
   };
 }
