@@ -60,7 +60,7 @@ export default {
       yield put({
         type: 'changeState',
         payload: {
-          historydata: historydata ? historydata : [],
+          historydata: historydata ? historydata.reverse() : [],
           minTime: minTime,
           maxTime: maxTime,
         },

@@ -233,6 +233,7 @@ export default {
         type: 'changeState',
         payload: {
           goaldata,
+          isPrefix: false,
         },
       });
     },

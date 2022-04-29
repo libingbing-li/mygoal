@@ -21,7 +21,7 @@ class HistoryShowList extends React.Component<
 > {
   state: IState = {
     historydata: this.props.historydata,
-    reverse: false,
+    reverse: true,
   };
 
   componentDidMount = () => {
