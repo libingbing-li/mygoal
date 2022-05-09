@@ -46,7 +46,7 @@ class EditGoal extends React.Component<ModelEditGoal & { dispatch: any }> {
   }
 
   //在本处获取新的props并更新
-  componentWillReceiveProps = (nextProps: any) => {};
+  getDerivedStateFromProps = (nextProps: any) => {};
 
   save = () => {
     // 在编辑器获得焦点时按下ctrl+s会执行此方法

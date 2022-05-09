@@ -280,7 +280,7 @@ class Satisfy extends React.Component<
     });
   };
 
-  componentWillReceiveProps = (nextProps: ModelSatisfy) => {
+  getDerivedStateFromProps = (nextProps: ModelSatisfy) => {
     this.setState({
       timeArray: nextProps.timeArray,
       goaldata: nextProps.goaldata,
