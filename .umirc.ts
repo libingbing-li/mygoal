@@ -1,12 +1,6 @@
 import { defineConfig } from 'umi';
 
 export default defineConfig({
-  history: {
-    type: 'hash',
-  },
-  base: './',
-  publicPath: './',
-  hash: true,
   nodeModulesTransform: {
     type: 'none',
   },
@@ -18,4 +12,11 @@ export default defineConfig({
     { path: '/goals', component: '@/pages/setting/goals' },
   ],
   mfsu: {},
+  // build
+  history: {
+    type: 'hash',
+  },
+  base: './',
+  publicPath: './',
+  hash: true,
 });

@@ -65,7 +65,7 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
   }
 
   //在本处获取新的props并更新
-  getDerivedStateFromProps = (nextProps: ModelEditTask) => {
+  componentWillReceiveProps = (nextProps: ModelEditTask) => {
     // 前缀
     if (history.location.query?.prefix) {
       this.setState({

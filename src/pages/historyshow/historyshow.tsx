@@ -39,7 +39,7 @@ class HistoryShowList extends React.Component<
     }
   };
 
-  getDerivedStateFromProps = (nextProps: ModelHistoryShow) => {
+  componentWillReceiveProps = (nextProps: ModelHistoryShow) => {
     this.setState({
       historydata: nextProps.historydata,
     });

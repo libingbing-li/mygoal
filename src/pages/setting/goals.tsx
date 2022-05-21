@@ -28,7 +28,7 @@ class Goals extends React.Component<ModelSetting & { dispatch: any }> {
     });
   };
 
-  getDerivedStateFromProps = (nextProps: ModelSetting) => {
+  componentWillReceiveProps = (nextProps: ModelSetting) => {
     this.setState({
       data: nextProps.goalFinish,
     });

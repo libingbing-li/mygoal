@@ -6,7 +6,9 @@
     "postinstall": "umi generate tmp",
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'",
     "test": "umi-test",
-    "test:coverage": "umi-test --coverage"
+    "test:coverage": "umi-test --coverage",
+    "deploy": "gh-pages -d dist",
+    "clean": "gh-pages-clean"
   },
   "gitHooks": {
     "pre-commit": "lint-staged"
@@ -36,5 +38,11 @@
     "react-dom": "^17.0.1",
     "umi": "^3.3.9",
     "yorkie": "^2.0.0"
+  },
+  "name": "mygoal",
+  "version": "2.1.0",
+  "homepage": "https://libingbing-li.github.io/mygoal",
+  "devDependencies": {
+    "gh-pages": "^4.0.0"
   }
 }
