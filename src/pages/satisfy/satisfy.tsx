@@ -446,7 +446,6 @@ class Satisfy extends React.Component<
               }}
             >
               {this.state.timeArray.map((time: number, index: number) => {
-                console.log(time, index);
                 return (
                   <div key={time}>{this.showTimeInterval(time, index)}</div>
                 );

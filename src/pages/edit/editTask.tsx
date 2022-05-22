@@ -61,6 +61,20 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
           timeId,
         },
       });
+    } else {
+      this.props.dispatch({
+        type: 'editTask/changeState',
+        payload: {
+          timeId: 0,
+          txt: '',
+          interval: { type: 1, num: 0 },
+          data: null,
+          intervalTimeType: true,
+          goaldata: [],
+          isPrefix: false,
+          dataP: null,
+        },
+      });
     }
   }
 
