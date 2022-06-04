@@ -99,6 +99,9 @@ export default {
           intervalTimeType: state.intervalTimeType,
         };
         success = yield indexedDB.put(dbName, data);
+        if (state.timeId !== state.data.timeId) {
+          indexedDB.remove(dbName, state.data.timeId);
+        }
       } else {
         console.log('进入添加');
         // 添加
