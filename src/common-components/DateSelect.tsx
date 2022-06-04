@@ -124,7 +124,7 @@ class DateSelect extends React.Component<IProps> {
           }
         }
         selectBC = 'repeat(7, 1fr)';
-        selectBR = `repeat(${parseInt(String(arr.length / 7))}, 1fr)`;
+        selectBR = `repeat(${parseInt(String(arr.length / 7)) + 1}, 1fr)`;
         day = date;
         break;
       case 3:
