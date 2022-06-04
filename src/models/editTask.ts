@@ -87,7 +87,7 @@ export default {
 
       let dbName = 'Tasks';
       let success: boolean = false;
-      if (state.timeId) {
+      if (state.data) {
         console.log('进入编辑');
         // 编辑
         let data: TaskShow = {
@@ -102,7 +102,8 @@ export default {
       } else {
         console.log('进入添加');
         // 添加
-        let timeId = new Date().getTime();
+        let timeId = state.timeId ? state.timeId : new Date().getTime();
+        console.log();
         if (interval.type === 2) {
           let week = new Date().getDay(); //0-6 0是周天
           if (week === 0) {
@@ -279,7 +280,7 @@ export default {
       console.log('添加前缀一次性任务');
       const state: ModelEditTask = yield select((state: any) => state.editTask);
       // 添加
-      let timeId = new Date().getTime();
+      let timeId = state.timeId ? state.timeId : new Date().getTime();
       let data: TaskShow = {
         timeId: timeId,
         endTimeId: 0,

@@ -13,7 +13,7 @@
 import React from 'react';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import style from './styles/DateSelect.less';
-import { months } from 'moment';
+import { months, weekdays } from 'moment';
 
 const defaultProps = {
   type: 1, //type 1月 2日期  3年
@@ -55,6 +55,7 @@ interface IState {
   selectBC: string;
   selectBR: string;
   day: number;
+  week: Array<string>;
 }
 
 class DateSelect extends React.Component<IProps> {
@@ -69,6 +70,7 @@ class DateSelect extends React.Component<IProps> {
     day: 0,
     selectBC: 'repeat(4, 1fr)',
     selectBR: 'repeat(3, 1fr)',
+    week: ['日', '一', '二', '三', '四', '五', '六'],
   };
   componentDidMount = () => {
     if (this.props.time === 0) {
@@ -116,7 +118,6 @@ class DateSelect extends React.Component<IProps> {
           arr.push(i);
         }
         let arrRmainder = arr.length % 7;
-        console.log(arrRmainder);
         if (arrRmainder !== 0) {
           for (let i = 0; i < 7 - arrRmainder; i++) {
             arr.push(0);
@@ -324,10 +325,24 @@ class DateSelect extends React.Component<IProps> {
               gridTemplateRows: this.state.selectBR,
             }}
           >
+            {this.props.type === 2
+              ? this.state.week.map((week: string, index: number) => {
+                  return (
+                    <div
+                      key={week}
+                      style={{
+                        background: '#eee',
+                      }}
+                    >
+                      {week}
+                    </div>
+                  );
+                })
+              : null}
             {this.state.selectArray.map((day: number, index: number) => {
               return (
                 <div
-                  key={day}
+                  // key={day}
                   style={{
                     opacity: day === 0 ? 0 : 1,
                     background: this.state.day === day ? '#bbb' : '#eee',

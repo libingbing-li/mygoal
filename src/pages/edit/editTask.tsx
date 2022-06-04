@@ -14,10 +14,12 @@ import {
   EllipsisOutlined,
 } from '@ant-design/icons';
 import { GoalShow, ModelEditTask, PrefixShow } from '../../utils/interface';
+import DateSelect from '../../common-components/DateSelect';
 import commonStyle from '@/common-styles/common.less';
 import Confirm from '@/common-components/Confirm';
 import styles from './styles/edit.less';
 import app from '@/utils/app';
+import moment from 'moment';
 
 interface IState {
   tags: Array<GoalShow>;
@@ -233,6 +235,45 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
     history.goBack();
   };
 
+  // 选择设定时间
+  setTimeId = (year: number, month: number, date: number) => {
+    let yearMax = 0;
+    let monthMax = 0;
+    if (month + 1 === 13) {
+      yearMax = year + 1;
+      monthMax = 1;
+    } else {
+      yearMax = year;
+      monthMax = month + 1;
+    }
+    const hourTime =
+      new Date().getTime() -
+      new Date(
+        `${new Date().getFullYear()}-${
+          new Date().getMonth() + 1
+        }-${new Date().getDate()}`,
+      ).getTime();
+    const timeId = new Date(`${year}-${month}-${date}`).getTime() + hourTime;
+    console.log(new Date().getTime(), timeId);
+    this.props.dispatch({
+      type: 'editTask/changeState',
+      payload: {
+        timeId,
+      },
+    });
+  };
+
+  // 为txt添加详细时间00:00
+  addTime = () => {
+    this.changeModelState(
+      'txt',
+      this.props.txt +
+        `——${new Date().getHours()}:${
+          new Date().getMinutes() < 10 ? 0 : ''
+        }${new Date().getMinutes()}`,
+    );
+  };
+
   render() {
     return (
       <div className={styles.edit_task}>
@@ -291,12 +332,31 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
           )}
         </div>
         <div className={styles.taskbody}>
+          <DateSelect
+            id="goals"
+            type={2}
+            time={this.props.timeId}
+            style={{
+              width: '80vw',
+              margin: '10px 0',
+              flex: '0 0 auto',
+            }}
+            returnTime={(year: number, month: number, date: number) =>
+              this.setTimeId(year, month, date)
+            }
+          ></DateSelect>
           <textarea
             className={styles.txt}
             value={this.props.txt}
             onChange={(e) => this.changeModelState('txt', e.target.value)}
           />
           <div className={styles.goal}>
+            <div className={styles.tags}>
+              <div style={{ display: 'inline-block' }}>设定详细时间：</div>
+              <span onClick={this.addTime}>{`${new Date().getHours()}:${
+                new Date().getMinutes() < 10 ? 0 : ''
+              }${new Date().getMinutes()}`}</span>
+            </div>
             <div className={styles.tags}>
               <div>任务关联目标：</div>
               {this.state.tags.map((goal, index) => {
