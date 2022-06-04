@@ -336,9 +336,9 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
             id="goals"
             type={2}
             time={
-              history.location.query?.timeId
-                ? Number(history.location.query?.timeId)
-                : this.props.timeId
+              history.location.query?.timeId === 'null'
+                ? this.props.timeId
+                : Number(history.location.query?.timeId)
             }
             style={{
               width: '80vw',

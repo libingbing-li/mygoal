@@ -298,6 +298,7 @@ class DateSelect extends React.Component<IProps> {
         break;
     }
     this.getStr(this.state.year, month, day);
+    this.select();
   };
 
   render() {
