@@ -335,7 +335,11 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
           <DateSelect
             id="goals"
             type={2}
-            time={this.props.timeId}
+            time={
+              history.location.query?.timeId
+                ? Number(history.location.query?.timeId)
+                : this.props.timeId
+            }
             style={{
               width: '80vw',
               margin: '10px 0',
