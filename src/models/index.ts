@@ -284,9 +284,11 @@ export default {
         // 根据任务的循环设定新建下一个任务
         let intervalNum = 0; //循环任务的间隔天数
         //判断按创建时间还是按完成时间循环
-        const timeId = tasksFinish[i].intervalTimeType
+        let timeId = tasksFinish[i].intervalTimeType
           ? tasksFinish[i].timeId
           : tasksFinish[i].endTimeId;
+        timeId =
+          timeId > tasksFinish[i].timeId ? timeId : tasksFinish[i].timeId;
         switch (tasksFinish[i].interval.type) {
           case 1:
             break;
@@ -312,6 +314,7 @@ export default {
             intervalNum = Number(tasksFinish[i].interval.num[0]) + 1;
             break;
         }
+        let newId = timeId + intervalNum * 24 * 60 * 60 * 1000;
         // console.log(intervalNum)
         if (intervalNum !== 0) {
           const removeTask: boolean = yield indexedDB.remove(
@@ -320,7 +323,7 @@ export default {
           );
           if (removeTask) {
             let newTask: TaskShow = {
-              timeId: timeId + intervalNum * 24 * 60 * 60 * 1000,
+              timeId: newId,
               endTimeId: 0,
               txt: tasksFinish[i].txt,
               tags: tasksFinish[i].tags,
@@ -397,7 +400,11 @@ export default {
           }
           indexedDB.put('Goals', goal);
         }
-        if (goal.endTimeId !== 0 && goal.endDone === false)
+        if (
+          goal.endTimeId !== 0 &&
+          goal.endTimeId < nowTime &&
+          goal.endDone === false
+        )
           goalFinish.push(goal);
       });
 

@@ -285,7 +285,7 @@ export default {
         endTimeId: 0,
         txt: state.txt,
         tags: payload.tags,
-        interval: { type: 1, num: 0 },
+        interval: { type: 1, num: [0] },
         intervalTimeType: true,
       };
       let dbName = 'Tasks';

@@ -4,7 +4,7 @@ export interface TaskShow {
   endTimeId: number;
   txt: string;
   tags: Array<GoalShow>;
-  interval: { type: number; num: Array<number> | number };
+  interval: { type: number; num: Array<number> };
   intervalTimeType: boolean; // 按设定时间/完成时间决定循环, 默认true按设定时间
 }
 // 前缀 - 用于便捷地生成一个带固定前缀的任务
