@@ -60,7 +60,7 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
       this.props.dispatch({
         type: 'editTask/getData',
         payload: {
-          timeId,
+          timeId: Number(timeId),
         },
       });
     } else {
@@ -254,7 +254,6 @@ class EditTask extends React.Component<ModelEditTask & { dispatch: any }> {
         }-${new Date().getDate()}`,
       ).getTime();
     const timeId = new Date(`${year}-${month}-${date}`).getTime() + hourTime;
-    console.log(new Date().getTime(), timeId);
     this.props.dispatch({
       type: 'editTask/changeState',
       payload: {

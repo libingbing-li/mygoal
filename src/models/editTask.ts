@@ -99,7 +99,7 @@ export default {
           intervalTimeType: state.intervalTimeType,
         };
         success = yield indexedDB.put(dbName, data);
-        if (state.timeId !== state.data.timeId) {
+        if (success && state.timeId != state.data.timeId) {
           indexedDB.remove(dbName, state.data.timeId);
         }
       } else {

@@ -73,15 +73,16 @@ class DateSelect extends React.Component<IProps> {
     week: ['日', '一', '二', '三', '四', '五', '六'],
   };
   componentDidMount = () => {
-    if (this.props.time === 0) {
-      const nowDate = new Date();
+    console.log(this.props);
+    if (this.props.time) {
+      const nowDate = new Date(this.props.time);
       let year = nowDate.getFullYear();
       let month = nowDate.getMonth() + 1;
       let date = nowDate.getDate();
 
       this.getStr(year, month, date);
     } else {
-      const nowDate = new Date(this.props.time);
+      const nowDate = new Date();
       let year = nowDate.getFullYear();
       let month = nowDate.getMonth() + 1;
       let date = nowDate.getDate();
